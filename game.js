@@ -27,11 +27,12 @@ class Game extends React.Component {
         this.timer = null;
     }
 
-    refresh() {
+    async refresh() {
         console.log("refreshing");
         var oldState = this.state.gameState;
-        this.asyncGetGameState();
+        await this.asyncGetGameState();
         if (oldState != this.state.gameState) {
+            // TODO check the state first
             this.asyncGetPoem();
             this.asyncGetEndings();
         }
@@ -45,9 +46,11 @@ class Game extends React.Component {
         console.log("asyncGetGameState");
         let result = await getGameState();
         let resultText = await result.text();
-        this.setState({
-            gameState: resultText,
-        });
+        if (this.state.gameState != resultText) {
+            this.setState({
+                gameState: resultText,
+            });
+        }
     }
 
     async asyncGetPoem() {
@@ -150,6 +153,7 @@ class SubmitBox extends React.Component {
     }
 
     handleChange(event) {
+        console.log("handleChange, value=" + event.target.value);
         this.state.value = event.target.value;
     }
 
