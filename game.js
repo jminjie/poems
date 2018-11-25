@@ -14,11 +14,14 @@ class Game extends React.Component {
         this.state = {
             gameState: 'unknown',
             poem: 'not set',
+            endingsJson: {"endings": ["dummy ending 1", "dummy ending 2"]},
         };
         this.asyncGetGameState();
         // TODO this requires that we refresh to get the poem.
         // In the future we can continuously poll
         this.asyncGetPoem();
+        // TODO same
+        this.asyncGetEndings();
     }
 
     handleAsyncError(error) {
@@ -40,6 +43,15 @@ class Game extends React.Component {
         let resultText = await result.text();
         this.setState({
             poem: resultText,
+        });
+    }
+
+    async asyncGetEndings() {
+        console.log("asyncGetEndings");
+        let result = await getEndings();
+        let resultJson = await result.json();
+        this.setState({
+            endingsJson: resultJson,
         });
     }
 
@@ -68,9 +80,8 @@ class Game extends React.Component {
                 e(IncrementButton, {onClick: this.asyncIncrement})
             );
         } else if (this.state.gameState == '2') {
-            // TODO get real submissions
             // TODO render voting boxes
-            var submissions = ['one ending', 'another ending', 'real ending'];
+            var submissions = this.state.endingsJson["endings"];
             return e("pre", null,
                 e(PoemDisplay, {poem: this.state.poem}),
                 e(SubmissionsList, {submissions: submissions})

@@ -5,6 +5,7 @@ const INCREMENT_URL = 'nextState';
 const SUBMIT_POEM_URL = 'submitFullPoem';
 const POEM_URL = 'getPoem';
 const SUBMIT_ENDING_URL = 'submitEnding';
+const ENDINGS_URL = 'getEndings';
 
 // just for testing
 const TEST_MODE = false;
@@ -74,6 +75,12 @@ function getPoem() {
                 resolve(testPoemPromise);
             }, 500);
         });
+    }
+}
+
+function getEndings() {
+    if (!TEST_MODE) {
+        return fetch(SERVER_URL + ENDINGS_URL);
     }
 }
 
