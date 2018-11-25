@@ -112,16 +112,14 @@ class Game extends React.Component {
     }
 }
 
+// TODO shuffle submissions
+// TODO add line breaks between submissions
 class SubmissionsList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.listItems = props.submissions.map(
+    render() {
+        var listItems = this.props.submissions.map(
             (submission) => e('li', null, submission)
         );
-    }
-
-    render() {
-        return e('ul', null, this.listItems);
+        return e('ul', null, listItems);
     }
 }
 
@@ -182,6 +180,7 @@ class PoemSubmitBox extends SubmitBox {
         this.onSubmitBoxSubmit = this.onSubmitBoxSubmit.bind(this);
     }
 
+    // TODO give some feedback that the poem was sent
     sendPoem() {
         console.log("sending poem=" + this.state.value);
         sendPoemRequest(this.state.value);
