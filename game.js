@@ -113,13 +113,16 @@ class Game extends React.Component {
 }
 
 // TODO shuffle submissions
-// TODO add line breaks between submissions
 class SubmissionsList extends React.Component {
     render() {
         var listItems = this.props.submissions.map(
-            (submission) => e('li', null, submission)
+            (submission) => e('li', {style: {
+                "margin": "0 0 10px 0",
+            }}, submission)
         );
-        return e('ul', null, listItems);
+        return e('ul', {style: {
+            "margin": "20px 0 20px 0",
+        }}, listItems);
     }
 }
 
