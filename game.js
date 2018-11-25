@@ -78,20 +78,43 @@ class PoemDisplay extends React.Component {
 }
 
 class SubmitBox extends React.Component {
-    constructor(props) { super(props);}
+    constructor(props) {
+        super(props);
+        this.state = {value: ''};
+    }
 
-    onSubmitBoxSubmit() {
+    onSubmitBoxSubmit(event) {
         console.log("SubmitBox#onSubmitBoxSubmit()");
     }
 
+    handleChange(event) {
+        this.state.value = event.target.value;
+    }
+
+    /*
+    render() {
+        return (
+            <form onSubmit={this.onSubmitBoxSubmit}>
+                <input type="textarea" onChange={this.handleChange} />
+                <input type="submit" value="Submit the thing" />
+            </form>
+        );
+    }
+    */
+
     render() {
         return e(
-            'form', {className: 'SubmitForm'},
-            e('input', {type: 'textarea'}),
-            e('button',
-                {type: 'submit',
-                    onSubmit: () => {this.onSubmitBoxSubmit()}
-                }, this.label)
+            'form', {
+                className: 'SubmitForm',
+                onSubmit: () => {this.onSubmitBoxSubmit(event)}
+            },
+            e('input', {
+                type: 'textarea',
+                onChange: () => {this.handleChange(event)},
+                rows: 5,
+                cols: 60,
+            }),
+            e('button', {type: 'submit'}, this.label)
         );
     }
 }
@@ -99,7 +122,6 @@ class SubmitBox extends React.Component {
 class PoemSubmitBox extends SubmitBox {
     constructor(props) {
         super(props);
-        this.state = {value: ''};
         this.label = "Submit poem";
 
         this.onSubmitBoxSubmit = this.onSubmitBoxSubmit.bind(this);
@@ -111,13 +133,13 @@ class PoemSubmitBox extends SubmitBox {
 
     sendPoem() {
         console.log("sending poem=" + this.state.value);
-        //sendPoemRequest(this.value);
+        sendPoemRequest(this.state.value);
     }
 
     onSubmitBoxSubmit(event) {
-        event.preventDefault();
         console.log("PoemSubmitBox#onSubmitBoxSubmit");
-        console.log("value=" + event.target.value);
+        event.preventDefault();
+        this.sendPoem();
         this.afterSubmit();
     }
 }
