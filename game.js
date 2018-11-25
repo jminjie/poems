@@ -108,8 +108,7 @@ class SubmitBox extends React.Component {
                 className: 'SubmitForm',
                 onSubmit: () => {this.onSubmitBoxSubmit(event)}
             },
-            e('input', {
-                type: 'textarea',
+            e('textarea', {
                 onChange: () => {this.handleChange(event)},
                 rows: 5,
                 cols: 60,
