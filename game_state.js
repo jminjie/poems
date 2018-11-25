@@ -25,11 +25,15 @@ function getGameState() {
 }
 
 function incrementGameState() {
-   return postData(SERVER_URL + INCREMENT_URL);
+   return fetch(SERVER_URL + INCREMENT_URL);
 }
 
 function sendPoemRequest(submission) {
-    return postData(SERVER_URL + SUBMIT_POEM_URL, { body: submission });
+    return fetch(SERVER_URL + SUBMIT_POEM_URL,
+        {
+            method: "POST",
+            body: submission
+        });
 }
 
 const POEM = `
