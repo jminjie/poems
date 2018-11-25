@@ -6,7 +6,7 @@ const e = React.createElement;
 // 2 = see all submissions and vote
 // 3 = see results
 // TODO this is just for testing
-setGameState('0');
+setGameState(0);
 
 class Game extends React.Component {
     constructor(props) {
@@ -15,7 +15,12 @@ class Game extends React.Component {
             gameState: 'unknown',
             poem: 'not set',
         };
-        this.asyncGetGameState()
+        this.asyncGetGameState();
+        this.asyncGetPoem();
+    }
+
+    handleAsyncError(error) {
+        console.log("handleAsyncError: error=" + error);
     }
 
     async asyncGetGameState() {
@@ -23,47 +28,52 @@ class Game extends React.Component {
         let result = await getGameState();
         let resultJson = await result.json();
         this.setState({
+            // TODO JSON.stringify may be unecessary;
+            // we could try not calling it and just comparing to ints later
             gameState: JSON.stringify(resultJson),
         });
     }
 
     async asyncGetPoem() {
-        var result = await getPoem();
+        console.log("asyncGetPoem");
+        let result = await getPoem();
+        let resultJson = await result.json();
         this.setState({
-            poem: result,
+            poem: resultJson,
         });
     }
 
     async asyncIncrement() {
+        console.log("asyncIncrement");
         var result = await incrementGameState();
+        result.catch(handleAsyncError);
         let resultJson = await result.json();
+        resultJson.catch(handleAsyncError);
         this.setState({
             gameState: JSON.stringify(resultJson),
         });
-        console.log("Incremented state");
     }
 
     render() {
         console.log('game state is rendered with state=' + this.state.gameState);
         if (this.state.gameState == 'unknown') {
-            return 'Game state is ' + this.state.gameState;
+            return 'Loading...';
         } else if (this.state.gameState == '0') {
-            var submitBox = new PoemSubmitBox();
-            submitBox.setAfterSubmit(() => {
-                    this.asyncIncrement;
-                });
+            var submitBox = new PoemSubmitBox({afterSubmit: this.asyncIncrement});
             return submitBox.render();
         } else if (this.state.gameState == '1') {
-            return [new PoemDisplay(this.state.poem).render(),
-                new EndingSubmitBox().render()
-            ];
+            return e("pre", null,
+                e(PoemDisplay, {poem: this.state.poem}),
+                e(EndingSubmitBox),
+                e(IncrementButton, {onClick: this.asyncIncrement})
+            );
         } else if (this.state.gameState == '2') {
-            // render all submissions
-            // render voting boxes
+            // TODO render all submissions
+            // TODO render voting boxes
             return "gameState is 2";
         } else if (this.state.gameState == '3') {
-            // render answer
-            // render winner
+            // TODO render answer
+            // TODO render winner
             return "gameState is 3";
         } else {
             return "Game state is invalid =" + this.state.gameState;
@@ -71,8 +81,16 @@ class Game extends React.Component {
     }
 }
 
+class IncrementButton extends React.Component {
+    render() {
+        return e('button', {onClick: this.props.onClick}, "All submissions are in.");
+    }
+}
+
 class PoemDisplay extends React.Component {
     render() {
+        // TODO temp log
+        console.log(this.props.poem);
         return this.props.poem;
     }
 }
@@ -81,9 +99,12 @@ class SubmitBox extends React.Component {
     constructor(props) {
         super(props);
         this.state = {value: ''};
+        this.rows = 15;
+        this.cols = 60;
     }
 
     onSubmitBoxSubmit(event) {
+        event.preventDefault();
         console.log("SubmitBox#onSubmitBoxSubmit()");
     }
 
@@ -99,8 +120,8 @@ class SubmitBox extends React.Component {
             },
             e('textarea', {
                 onChange: () => {this.handleChange(event)},
-                rows: 5,
-                cols: 60,
+                rows: this.rows,
+                cols: this.cols,
             }),
             e('br'),
             e('button', {type: 'submit'}, this.label)
@@ -112,12 +133,8 @@ class PoemSubmitBox extends SubmitBox {
     constructor(props) {
         super(props);
         this.label = "Submit poem";
-
+        this.afterSubmit = this.props.afterSubmit;
         this.onSubmitBoxSubmit = this.onSubmitBoxSubmit.bind(this);
-    }
-
-    setAfterSubmit(afterSubmit) {
-        this.afterSubmit = afterSubmit;
     }
 
     sendPoem() {
@@ -126,7 +143,6 @@ class PoemSubmitBox extends SubmitBox {
     }
 
     onSubmitBoxSubmit(event) {
-        console.log("PoemSubmitBox#onSubmitBoxSubmit");
         event.preventDefault();
         this.sendPoem();
         this.afterSubmit();
@@ -137,6 +153,7 @@ class EndingSubmitBox extends SubmitBox {
     constructor(props) {
         super(props);
         this.label = "Submit ending";
+        this.rows = 5;
     }
 }
 

@@ -1,5 +1,3 @@
-var gameState;
-
 const SERVER_URL = 'http://192.168.86.84:8080/';
 
 const GAME_STATE_URL = 'getGameState';
@@ -8,35 +6,82 @@ const SUBMIT_POEM_URL = 'submitFullPoem';
 const POEM_URL = 'getPoem';
 
 // just for testing
+const TEST_MODE = true;
+
 function setGameState(state) {
-    gameState = state
+    testGameState = state
 }
+var testGameStatePromise = {
+    json() {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve(testGameState);
+            }, 500);
+        });
+    }
+};
+var testPoemPromise = {
+    json() {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve(TEST_POEM);
+            }, 500);
+        });
+    }
+};
+const TEST_POEM = `Gaily bedight,
+   A gallant knight,
+In sunshine and in shadow,
+   Had journeyed long,
+   Singing a song,
+In search of Eldorado.
+    But he grew old—
+   This knight so bold—
+And o’er his heart a shadow—
+   Fell as he found
+   No spot of ground
+That looked like Eldorado.
+    And, as his strength
+   Failed him at length,
+He met a pilgrim shadow—
+   ‘Shadow,’ said he,
+   ‘Where can it be—
+This land of Eldorado?’`;
+// end of testing section
+
 
 function getGameState() {
-    return fetch(SERVER_URL + GAME_STATE_URL);
-    /*
-    // Contact the server to get the game state. For now we wait 1 second
-    // and return 0
-    return new Promise(resolve => {
-        setTimeout(() => {
-            resolve(gameState);
-        }, 1000);
-    });
-    */
+    if (!TEST_MODE) {
+        return fetch(SERVER_URL + GAME_STATE_URL);
+    } else {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve(testGameStatePromise);
+            }, 500);
+        });
+    }
 }
 
 function getPoem() {
-    return fetch(SERVER_URL + POEM_URL);
+    if (!TEST_MODE) {
+        return fetch(SERVER_URL + POEM_URL);
+    } else {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve(testPoemPromise);
+            }, 500);
+        });
+    }
 }
 
 function incrementGameState() {
-   return fetch(SERVER_URL + INCREMENT_URL);
+    if (!TEST_MODE) {
+       return fetch(SERVER_URL + INCREMENT_URL);
+    }
 }
 
 function sendPoemRequest(submission) {
-    return fetch(SERVER_URL + SUBMIT_POEM_URL,
-        {
-            method: "POST",
-            body: submission
-        });
+    if (!TEST_MODE) {
+        return fetch(SERVER_URL + SUBMIT_POEM_URL, { method: "POST", body: submission });
+    }
 }
