@@ -4,9 +4,10 @@ const GAME_STATE_URL = 'getGameState';
 const INCREMENT_URL = 'nextState';
 const SUBMIT_POEM_URL = 'submitFullPoem';
 const POEM_URL = 'getPoem';
+const SUBMIT_ENDING_URL = 'submitEnding';
 
 // just for testing
-const TEST_MODE = true;
+const TEST_MODE = false;
 
 function setGameState(state) {
     testGameState = state
@@ -35,12 +36,14 @@ In sunshine and in shadow,
    Had journeyed long,
    Singing a song,
 In search of Eldorado.
+
     But he grew old—
    This knight so bold—
 And o’er his heart a shadow—
    Fell as he found
    No spot of ground
 That looked like Eldorado.
+
     And, as his strength
    Failed him at length,
 He met a pilgrim shadow—
@@ -75,13 +78,19 @@ function getPoem() {
 }
 
 function incrementGameState() {
-    if (!TEST_MODE) {
-       return fetch(SERVER_URL + INCREMENT_URL);
-    }
+   return fetch(SERVER_URL + INCREMENT_URL);
 }
 
 function sendPoemRequest(submission) {
     if (!TEST_MODE) {
-        return fetch(SERVER_URL + SUBMIT_POEM_URL, { method: "POST", body: submission });
+        return fetch(SERVER_URL + SUBMIT_POEM_URL,
+            { method: "POST", body: submission });
+    }
+}
+
+function sendEndingRequest(ending) {
+    if (!TEST_MODE) {
+        return fetch(SERVER_URL + SUBMIT_ENDING_URL,
+            { method: "POST", body: ending });
     }
 }

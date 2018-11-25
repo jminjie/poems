@@ -6,7 +6,7 @@ const e = React.createElement;
 // 2 = see all submissions and vote
 // 3 = see results
 // TODO this is just for testing
-setGameState(0);
+setGameState(1);
 
 class Game extends React.Component {
     constructor(props) {
@@ -16,6 +16,8 @@ class Game extends React.Component {
             poem: 'not set',
         };
         this.asyncGetGameState();
+        // TODO this requires that we refresh to get the poem.
+        // In the future we can continuously poll
         this.asyncGetPoem();
     }
 
@@ -26,20 +28,18 @@ class Game extends React.Component {
     async asyncGetGameState() {
         console.log("asyncGetGameState");
         let result = await getGameState();
-        let resultJson = await result.json();
+        let resultText = await result.text();
         this.setState({
-            // TODO JSON.stringify may be unecessary;
-            // we could try not calling it and just comparing to ints later
-            gameState: JSON.stringify(resultJson),
+            gameState: resultText,
         });
     }
 
     async asyncGetPoem() {
         console.log("asyncGetPoem");
         let result = await getPoem();
-        let resultJson = await result.json();
+        let resultText = await result.text();
         this.setState({
-            poem: resultJson,
+            poem: resultText,
         });
     }
 
@@ -68,9 +68,13 @@ class Game extends React.Component {
                 e(IncrementButton, {onClick: this.asyncIncrement})
             );
         } else if (this.state.gameState == '2') {
-            // TODO render all submissions
+            // TODO get real submissions
             // TODO render voting boxes
-            return "gameState is 2";
+            var submissions = ['one ending', 'another ending', 'real ending'];
+            return e("pre", null,
+                e(PoemDisplay, {poem: this.state.poem}),
+                e(SubmissionsList, {submissions: submissions})
+            );
         } else if (this.state.gameState == '3') {
             // TODO render answer
             // TODO render winner
@@ -78,6 +82,19 @@ class Game extends React.Component {
         } else {
             return "Game state is invalid =" + this.state.gameState;
         }
+    }
+}
+
+class SubmissionsList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.listItems = props.submissions.map(
+            (submission) => e('li', null, submission)
+        );
+    }
+
+    render() {
+        return e('ul', null, this.listItems);
     }
 }
 
@@ -105,7 +122,7 @@ class SubmitBox extends React.Component {
 
     onSubmitBoxSubmit(event) {
         event.preventDefault();
-        console.log("SubmitBox#onSubmitBoxSubmit()");
+        console.log("SubmitBox onSubmitBoxSubmit()");
     }
 
     handleChange(event) {
@@ -155,8 +172,17 @@ class EndingSubmitBox extends SubmitBox {
         this.label = "Submit ending";
         this.rows = 5;
     }
-}
 
+    sendEnding() {
+        console.log("sending ending=" + this.state.value);
+        sendEndingRequest(this.state.value);
+    }
+
+    onSubmitBoxSubmit(event) {
+        event.preventDefault();
+        this.sendEnding();
+    }
+}
 
 // these lines find the like_button_container div and display the react
 // component inside it
