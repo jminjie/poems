@@ -91,17 +91,6 @@ class SubmitBox extends React.Component {
         this.state.value = event.target.value;
     }
 
-    /*
-    render() {
-        return (
-            <form onSubmit={this.onSubmitBoxSubmit}>
-                <input type="textarea" onChange={this.handleChange} />
-                <input type="submit" value="Submit the thing" />
-            </form>
-        );
-    }
-    */
-
     render() {
         return e(
             'form', {
@@ -113,6 +102,7 @@ class SubmitBox extends React.Component {
                 rows: 5,
                 cols: 60,
             }),
+            e('br'),
             e('button', {type: 'submit'}, this.label)
         );
     }
