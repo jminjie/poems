@@ -16,12 +16,25 @@ class Game extends React.Component {
             poem: 'not set',
             endingsJson: {"endings": ["dummy ending 1", "dummy ending 2"]},
         };
+        this.refresh();
+    }
+
+    componentDidMount() {
+        this.timer = setInterval(()=> this.refresh(), 2000);
+    }
+
+    componentWillUnmount() {
+        this.timer = null;
+    }
+
+    refresh() {
+        console.log("refreshing");
+        var oldState = this.state.gameState;
         this.asyncGetGameState();
-        // TODO this requires that we refresh to get the poem.
-        // In the future we can continuously poll
-        this.asyncGetPoem();
-        // TODO same
-        this.asyncGetEndings();
+        if (oldState != this.state.gameState) {
+            this.asyncGetPoem();
+            this.asyncGetEndings();
+        }
     }
 
     handleAsyncError(error) {
