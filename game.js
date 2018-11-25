@@ -152,7 +152,10 @@ class PoemDisplay extends React.Component {
 class SubmitBox extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {value: ''};
+        this.state = {
+            value: '',
+            message: '',
+        };
         this.rows = 15;
         this.cols = 60;
     }
@@ -179,7 +182,8 @@ class SubmitBox extends React.Component {
                 cols: this.cols,
             }),
             e('br'),
-            e('button', {type: 'submit'}, this.label)
+            e('button', {type: 'submit'}, this.label),
+            e('div', null, this.state.message)
         );
     }
 }
@@ -192,7 +196,6 @@ class PoemSubmitBox extends SubmitBox {
         this.onSubmitBoxSubmit = this.onSubmitBoxSubmit.bind(this);
     }
 
-    // TODO give some feedback that the poem was sent
     sendPoem() {
         console.log("sending poem=" + this.state.value);
         sendPoemRequest(this.state.value);
@@ -215,6 +218,10 @@ class EndingSubmitBox extends SubmitBox {
     sendEnding() {
         console.log("sending ending=" + this.state.value);
         sendEndingRequest(this.state.value);
+        // TODO check for success
+        this.setState({
+            message: "Submitted",
+        });
     }
 
     onSubmitBoxSubmit(event) {
