@@ -112,14 +112,23 @@ class Game extends React.Component {
     }
 }
 
-// TODO shuffle submissions
 class SubmissionsList extends React.Component {
+    shuffle(array) {
+        for (var i = array.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+    }
+
     render() {
         var listItems = this.props.submissions.map(
             (submission) => e('li', {style: {
                 "margin": "0 0 10px 0",
             }}, submission)
         );
+        this.shuffle(listItems);
         return e('ul', {style: {
             "margin": "20px 0 20px 0",
         }}, listItems);
