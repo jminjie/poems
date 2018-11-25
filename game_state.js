@@ -4,6 +4,7 @@ const SERVER_URL = 'http://192.168.86.84:8080/';
 
 const GAME_STATE_URL = 'getGameState';
 const INCREMENT_URL = 'nextState';
+const SUBMIT_POEM_URL = 'submitFullPoem';
 
 // just for testing
 function setGameState(state) {
@@ -25,6 +26,10 @@ function getGameState() {
 
 function incrementGameState() {
    return postData(SERVER_URL + INCREMENT_URL);
+}
+
+function sendPoemRequest(submission) {
+    return postData(SERVER_URL + SUBMIT_POEM_URL, { body: submission });
 }
 
 const POEM = `

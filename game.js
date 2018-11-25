@@ -49,7 +49,7 @@ class Game extends React.Component {
             return 'Game state is ' + this.state.gameState;
         } else if (this.state.gameState == '0') {
             var submitBox = new PoemSubmitBox();
-            submitBox.setOnSubmit(() => {
+            submitBox.setAfterSubmit(() => {
                     this.asyncIncrement;
                 });
             return submitBox.render();
@@ -60,9 +60,11 @@ class Game extends React.Component {
         } else if (this.state.gameState == '2') {
             // render all submissions
             // render voting boxes
+            return "gameState is 2";
         } else if (this.state.gameState == '3') {
             // render answer
             // render winner
+            return "gameState is 3";
         } else {
             return "Game state is invalid =" + this.state.gameState;
         }
@@ -76,24 +78,47 @@ class PoemDisplay extends React.Component {
 }
 
 class SubmitBox extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+    constructor(props) { super(props);}
 
     onSubmitBoxSubmit() {
         console.log("SubmitBox#onSubmitBoxSubmit()");
     }
 
     render() {
-        return [
-            e('textarea', {key: "text"}, null),
-            e('br', {key: "br"}, null),
-            e(
-                'button',
-                { onClick: () => {this.onSubmitBoxSubmit()}, key: "button", },
-                this.label,
-            )
-        ];
+        return e(
+            'form', {className: 'SubmitForm'},
+            e('input', {type: 'textarea'}),
+            e('button',
+                {type: 'submit',
+                    onSubmit: () => {this.onSubmitBoxSubmit()}
+                }, this.label)
+        );
+    }
+}
+
+class PoemSubmitBox extends SubmitBox {
+    constructor(props) {
+        super(props);
+        this.state = {value: ''};
+        this.label = "Submit poem";
+
+        this.onSubmitBoxSubmit = this.onSubmitBoxSubmit.bind(this);
+    }
+
+    setAfterSubmit(afterSubmit) {
+        this.afterSubmit = afterSubmit;
+    }
+
+    sendPoem() {
+        console.log("sending poem=" + this.state.value);
+        //sendPoemRequest(this.value);
+    }
+
+    onSubmitBoxSubmit(event) {
+        event.preventDefault();
+        console.log("PoemSubmitBox#onSubmitBoxSubmit");
+        console.log("value=" + event.target.value);
+        this.afterSubmit();
     }
 }
 
@@ -101,22 +126,6 @@ class EndingSubmitBox extends SubmitBox {
     constructor(props) {
         super(props);
         this.label = "Submit ending";
-    }
-}
-
-class PoemSubmitBox extends SubmitBox {
-    constructor(props, onSubmit) {
-        super(props);
-        this.label = "Submit poem";
-    }
-
-    setOnSubmit(onSubmit) {
-        this.submitMethod = onSubmit;
-    }
-
-    onSubmitBoxSubmit() {
-        console.log("PoemSubmitBox#onSubmitBoxSubmit");
-        this.submitMethod();
     }
 }
 
