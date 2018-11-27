@@ -118,6 +118,11 @@ func getEndingsHandler(w http.ResponseWriter, r *http.Request) {
   w.Write(bytes)
 }
 
+func getRealEndingHandler(w http.ResponseWriter, r *http.Request) {
+  enableCors(&w)
+  w.Write([]byte(poemRealEnding))
+}
+
 func main() {
   flag.Parse()
   http.HandleFunc("/getGameState", getGameStateHandler)
@@ -127,6 +132,7 @@ func main() {
   http.HandleFunc("/submitEnding", submitEndingHandler)
   http.HandleFunc("/getPoem", getPoemHandler)
   http.HandleFunc("/getEndings", getEndingsHandler)
+  http.HandleFunc("/getRealEnding", getRealEndingHandler)
 
   if err := http.ListenAndServe(":"+strconv.Itoa(portvar), nil); err != nil {
     panic(err)
