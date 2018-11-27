@@ -28,7 +28,6 @@ class Game extends React.Component {
     }
 
     async refresh() {
-        console.log("refreshing");
         var oldState = this.state.gameState;
         await this.asyncGetGameState();
         if (oldState != this.state.gameState) {
@@ -158,7 +157,6 @@ class SubmissionsList extends React.Component {
         if (this.props.realEnding != null) {
             for (let i = 0; i < submissions.length; i++) {
                 if (submissions[i] == this.props.realEnding) {
-                    console.log("found real ending at i=" + i);
                     submissions[i] = submissions[i] + " <------ REAL ENDING"
                 }
             }
@@ -183,8 +181,6 @@ class IncrementButton extends React.Component {
 
 class PoemDisplay extends React.Component {
     render() {
-        // TODO temp log
-        console.log(this.props.poem);
         return this.props.poem;
     }
 }
@@ -206,7 +202,6 @@ class SubmitBox extends React.Component {
     }
 
     handleChange(event) {
-        console.log("handleChange, value=" + event.target.value);
         this.state.value = event.target.value;
     }
 
@@ -237,7 +232,6 @@ class PoemSubmitBox extends SubmitBox {
     }
 
     sendPoem() {
-        console.log("sending poem=" + this.state.value);
         sendPoemRequest(this.state.value);
     }
 
@@ -256,7 +250,6 @@ class EndingSubmitBox extends SubmitBox {
     }
 
     sendEnding() {
-        console.log("sending ending=" + this.state.value);
         sendEndingRequest(this.state.value);
         // TODO check for success
         this.setState({
