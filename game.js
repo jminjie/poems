@@ -48,50 +48,37 @@ class Game extends React.Component {
     async asyncGetGameState() {
         console.log("asyncGetGameState");
         let result = await getGameState();
-        let resultText = await result.text();
-        if (this.state.gameState != resultText) {
+        if (this.state.gameState != result) {
             this.setState({
-                gameState: resultText,
+                gameState: result,
             });
         }
     }
 
     async asyncGetPoem() {
         console.log("asyncGetPoem");
-        let result = await getPoem();
-        let resultText = await result.text();
         this.setState({
-            poem: resultText,
+            poem: await getPoem(),
         });
     }
 
     async asyncGetEndings() {
         console.log("asyncGetEndings");
-        let result = await getEndings();
-        let resultJson = await result.json();
         this.setState({
-            endings: this.shuffle(resultJson['endings']),
+            endings: this.shuffle(await getEndings()),
         });
     }
 
     async asyncGetRealEnding() {
         console.log("asyncGetRealEnding");
-        let result = await getRealEnding();
-        let resultText = await result.text();
         this.setState({
-            realEnding: resultText,
+            realEnding: await getRealEnding(),
         });
     }
 
     async asyncIncrement() {
         console.log("asyncIncrement");
-        var result = await incrementGameState();
-        result.catch(handleAsyncError);
-        let resultJson = await result.json();
-        resultJson.catch(handleAsyncError);
-        this.setState({
-            gameState: JSON.stringify(resultJson),
-        });
+        incrementGameState();
     }
 
     shuffle(array) {

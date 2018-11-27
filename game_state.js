@@ -56,9 +56,10 @@ This land of Eldorado?’`;
 // end of testing section
 
 
-function getGameState() {
+async function getGameState() {
     if (!TEST_MODE) {
-        return fetch(SERVER_URL + GAME_STATE_URL);
+        let result = await fetch(SERVER_URL + GAME_STATE_URL);
+        return await result.text();
     } else {
         return new Promise(resolve => {
             setTimeout(() => {
@@ -68,27 +69,27 @@ function getGameState() {
     }
 }
 
-function getPoem() {
+async function getPoem() {
     if (!TEST_MODE) {
-        return fetch(SERVER_URL + POEM_URL);
+        let result = await fetch(SERVER_URL + POEM_URL);
+        return await result.text();
     } else {
-        return new Promise(resolve => {
-            setTimeout(() => {
-                resolve(testPoemPromise);
-            }, 500);
-        });
+        return testPoemPromise;
     }
 }
 
-function getEndings() {
+async function getEndings() {
     if (!TEST_MODE) {
-        return fetch(SERVER_URL + ENDINGS_URL);
+        let result = await fetch(SERVER_URL + ENDINGS_URL);
+        let resultJson = await result.json();
+        return resultJson['endings'];
     }
 }
 
-function getRealEnding() {
+async function getRealEnding() {
     if (!TEST_MODE) {
-        return fetch(SERVER_URL + REAL_ENDING_URL);
+        let result = await fetch(SERVER_URL + REAL_ENDING_URL);
+        return await result.text();
     }
 }
 
