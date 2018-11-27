@@ -32,10 +32,13 @@ class Game extends React.Component {
         var oldState = this.state.gameState;
         await this.asyncGetGameState();
         if (oldState != this.state.gameState) {
-            // TODO check the state first
-            this.asyncGetPoem();
-            this.asyncGetEndings();
-            this.asyncGetRealEnding();
+            if (this.state.gameState == '1') {
+                this.asyncGetPoem();
+            } else if (this.state.gameState == '2') {
+                this.asyncGetEndings();
+            } else if (this.state.gameState == '3') {
+                this.asyncGetRealEnding();
+            }
         }
     }
 
