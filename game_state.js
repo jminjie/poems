@@ -1,4 +1,5 @@
-const SERVER_URL = 'http://192.168.86.84:8080/';
+//const SERVER_URL = 'http://192.168.86.84:8080/';
+const SERVER_URL = 'http://localhost:8080/';
 
 const GAME_STATE_URL = 'getGameState';
 const INCREMENT_URL = 'nextState';
@@ -6,6 +7,7 @@ const SUBMIT_POEM_URL = 'submitFullPoem';
 const POEM_URL = 'getPoem';
 const SUBMIT_ENDING_URL = 'submitEnding';
 const ENDINGS_URL = 'getEndings';
+const REAL_ENDING_URL = 'getRealEnding';
 
 // just for testing
 const TEST_MODE = false;
@@ -81,6 +83,12 @@ function getPoem() {
 function getEndings() {
     if (!TEST_MODE) {
         return fetch(SERVER_URL + ENDINGS_URL);
+    }
+}
+
+function getRealEnding() {
+    if (!TEST_MODE) {
+        return fetch(SERVER_URL + REAL_ENDING_URL);
     }
 }
 

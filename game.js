@@ -14,7 +14,7 @@ class Game extends React.Component {
         this.state = {
             gameState: 'unknown',
             poem: 'not set',
-            endingsJson: {"endings": ["dummy ending 1", "dummy ending 2"]},
+            endings: ["dummy ending 1", "dummy ending 2"],
         };
         this.refresh();
     }
@@ -35,6 +35,7 @@ class Game extends React.Component {
             // TODO check the state first
             this.asyncGetPoem();
             this.asyncGetEndings();
+            this.asyncGetRealEnding();
         }
     }
 
@@ -67,7 +68,16 @@ class Game extends React.Component {
         let result = await getEndings();
         let resultJson = await result.json();
         this.setState({
-            endingsJson: resultJson,
+            endings: this.shuffle(resultJson['endings']),
+        });
+    }
+
+    async asyncGetRealEnding() {
+        console.log("asyncGetRealEnding");
+        let result = await getRealEnding();
+        let resultText = await result.text();
+        this.setState({
+            realEnding: resultText,
         });
     }
 
@@ -82,6 +92,16 @@ class Game extends React.Component {
         });
     }
 
+    shuffle(array) {
+        for (var i = array.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+        return array;
+    }
+
     render() {
         console.log('game state is rendered with state=' + this.state.gameState);
         if (this.state.gameState == 'unknown') {
@@ -93,19 +113,31 @@ class Game extends React.Component {
             return e("pre", null,
                 e(PoemDisplay, {poem: this.state.poem}),
                 e(EndingSubmitBox),
-                e(IncrementButton, {onClick: this.asyncIncrement})
+                e(IncrementButton, {
+                    onClick: this.asyncIncrement,
+                    label: "All submissions are in"}),
             );
         } else if (this.state.gameState == '2') {
             // TODO render voting boxes
-            var submissions = this.state.endingsJson["endings"];
-            return e("pre", null,
+            return e('div', null,
+                e("pre", null,
                 e(PoemDisplay, {poem: this.state.poem}),
-                e(SubmissionsList, {submissions: submissions})
+                e(SubmissionsList, {submissions: this.state.endings})),
+                e('br'),
+                e(IncrementButton, {
+                    onClick: this.asyncIncrement,
+                    label: "Reveal answer",
+                })
             );
         } else if (this.state.gameState == '3') {
-            // TODO render answer
-            // TODO render winner
-            return "gameState is 3";
+            return e('div', null,
+                e("pre", null,
+                e(PoemDisplay, {poem: this.state.poem}),
+                e(SubmissionsList, {
+                    submissions: this.state.endings,
+                    realEnding: this.state.realEnding,
+                })),
+            );
         } else {
             return "Game state is invalid =" + this.state.gameState;
         }
@@ -113,22 +145,27 @@ class Game extends React.Component {
 }
 
 class SubmissionsList extends React.Component {
-    shuffle(array) {
-        for (var i = array.length - 1; i > 0; i--) {
-            var j = Math.floor(Math.random() * (i + 1));
-            var temp = array[i];
-            array[i] = array[j];
-            array[j] = temp;
-        }
-    }
-
     render() {
-        var listItems = this.props.submissions.map(
+        let submissions = this.props.submissions;
+        if (submissions == null) {
+            return "Loading submissions...";
+        }
+
+        // If we know the real ending, point to it
+        if (this.props.realEnding != null) {
+            for (let i = 0; i < submissions.length; i++) {
+                if (submissions[i] == this.props.realEnding) {
+                    console.log("found real ending at i=" + i);
+                    submissions[i] = submissions[i] + " <------ REAL ENDING"
+                }
+            }
+        }
+
+        var listItems = submissions.map(
             (submission) => e('li', {style: {
                 "margin": "0 0 10px 0",
             }}, submission)
         );
-        this.shuffle(listItems);
         return e('ul', {style: {
             "margin": "20px 0 20px 0",
         }}, listItems);
@@ -137,7 +174,7 @@ class SubmissionsList extends React.Component {
 
 class IncrementButton extends React.Component {
     render() {
-        return e('button', {onClick: this.props.onClick}, "All submissions are in.");
+        return e('button', {onClick: this.props.onClick}, this.props.label);
     }
 }
 
