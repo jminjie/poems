@@ -54,7 +54,7 @@ func parsePoem(poem string) bool {
   // it should be the last new line after which there are non-empty lines.
   lineBreakIdxToUse := emptyLineIdxs[len(emptyLineIdxs)-1]
   poemStart = strings.Join(poemLines[0:lineBreakIdxToUse], "\n") + "\n"
-  poemRealEnding = strings.Join(poemLines[lineBreakIdxToUse+1:], "\n") + "\n"
+  poemRealEnding = strings.Join(poemLines[lineBreakIdxToUse+1:], "\n")
   return true
 }
 
