@@ -474,7 +474,28 @@ class EndingSubmitBox extends SubmitBox {
   }
 }
 
+class Start extends React.Component {
+    render() {
+        let r = Math.random().toString(36).substring(7);
+        return e('a', {href: "/?key=" + r}, "Click here to create a room");
+    }
+}
+
+// If no key, generate one or let the user enter
+var urlParams = new URLSearchParams(window.location.search);
+var entries = urlParams.entries();
+var keyFound = false;
+for (var pair of entries) {
+    if (pair[0] == "key") {
+        keyFound = true;
+    }
+}
 // these lines find the like_button_container div and display the react
 // component inside it
-const domContainer = document.querySelector('#game');
-ReactDOM.render(e(Game), domContainer);
+if (keyFound) {
+    const domContainer = document.querySelector('#game');
+    ReactDOM.render(e(Game), domContainer);
+} else {
+    const domContainer = document.querySelector('#game');
+    ReactDOM.render(e(Start), domContainer);
+}
