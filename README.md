@@ -1,6 +1,8 @@
 # The Poems Game
 A Balderdash-style game for poetry.
 
+![Recorded demo](https://github.com/jminjie/poems/blob/master/demo.gif)
+
 ## Rules to the game
 - First you can create a room or invite others to a created room by sharing the link.
 
@@ -15,7 +17,7 @@ A Balderdash-style game for poetry.
 - Hit the "reveal" button to see the real ending.
 
 ## Demo
-See the demo at http://poems.jminjie.com (note that HTTPS is not currently supported).
+Play the demo at http://poems.jminjie.com (note that HTTPS is not currently supported).
 
 ## Self-host instructions
 To run the client open the index.html file in your browser, or serve it over localhost with `python -m SimpleHTTPServer` or for python 3 `python -m http.server`.
