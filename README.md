@@ -1,5 +1,5 @@
-# Poems
-The poems game!
+# The Poems Game
+A Balderdash-style game for poetry.
 
 To run the client open the index.html file in your browser, or serve it over localhost with `python -m SimpleHTTPServer` or for python 3 `python -m http.server`.
 The client also needs a room key of the form `<server>/?key=SOMEKEY`.
