@@ -9,8 +9,6 @@ const SUBMIT_ENDING_URL = 'submitEnding';
 const ENDINGS_URL = 'getEndings';
 const REAL_ENDING_URL = 'getRealEnding';
 
-const KEY_SUFFIX = '?key=ABC'
-
 // just for testing
 const TEST_MODE = false;
 
