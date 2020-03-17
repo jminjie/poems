@@ -9,99 +9,93 @@ const e = React.createElement;
 setGameState(1);
 
 class Game extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            gameState: 'unknown',
-            poem: 'not set',
-            endings: ["dummy ending 1", "dummy ending 2"],
-        };
-        this.refresh();
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      gameState : 'unknown',
+      poem : 'not set',
+      endings : [ "dummy ending 1", "dummy ending 2" ],
+    };
+    this.refresh();
+  }
 
-    componentDidMount() {
-        this.timer = setInterval(()=> this.refresh(), 2000);
-    }
+  componentDidMount() { this.timer = setInterval(() => this.refresh(), 2000); }
 
-    componentWillUnmount() {
-        this.timer = null;
-    }
+  componentWillUnmount() { this.timer = null; }
 
-    async refresh() {
-        var oldState = this.state.gameState;
-        await this.asyncGetGameState();
-        if (oldState != this.state.gameState) {
-            if (this.state.gameState == '1') {
-                this.asyncGetPoem();
-            } else if (this.state.gameState == '2') {
-                this.asyncGetEndings();
-            } else if (this.state.gameState == '3') {
-                this.asyncGetRealEnding();
-            }
-        }
+  async refresh() {
+    var oldState = this.state.gameState;
+    await this.asyncGetGameState();
+    if (oldState != this.state.gameState) {
+      if (this.state.gameState == '1') {
+        this.asyncGetPoem();
+      } else if (this.state.gameState == '2') {
+        this.asyncGetEndings();
+      } else if (this.state.gameState == '3') {
+        this.asyncGetRealEnding();
+      }
     }
+  }
 
-    handleAsyncError(error) {
-        console.log("handleAsyncError: error=" + error);
+  handleAsyncError(error) { console.log("handleAsyncError: error=" + error); }
+
+  async asyncGetGameState() {
+    console.log("asyncGetGameState");
+    let result = await getGameState();
+    if (this.state.gameState != result) {
+      this.setState({
+        gameState : result,
+      });
     }
+  }
 
-    async asyncGetGameState() {
-        console.log("asyncGetGameState");
-        let result = await getGameState();
-        if (this.state.gameState != result) {
-            this.setState({
-                gameState: result,
-            });
-        }
+  async asyncGetPoem() {
+    console.log("asyncGetPoem");
+    this.setState({
+      poem : await getPoem(),
+    });
+  }
+
+  async asyncGetEndings() {
+    console.log("asyncGetEndings");
+    this.setState({
+      endings : this.shuffle(await getEndings()),
+    });
+  }
+
+  async asyncGetRealEnding() {
+    console.log("asyncGetRealEnding");
+    this.setState({
+      realEnding : await getRealEnding(),
+    });
+  }
+
+  async asyncIncrement() {
+    console.log("asyncIncrement");
+    incrementGameState();
+  }
+
+  shuffle(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
     }
+    return array;
+  }
 
-    async asyncGetPoem() {
-        console.log("asyncGetPoem");
-        this.setState({
-            poem: await getPoem(),
-        });
-    }
-
-    async asyncGetEndings() {
-        console.log("asyncGetEndings");
-        this.setState({
-            endings: this.shuffle(await getEndings()),
-        });
-    }
-
-    async asyncGetRealEnding() {
-        console.log("asyncGetRealEnding");
-        this.setState({
-            realEnding: await getRealEnding(),
-        });
-    }
-
-    async asyncIncrement() {
-        console.log("asyncIncrement");
-        incrementGameState();
-    }
-
-    shuffle(array) {
-        for (var i = array.length - 1; i > 0; i--) {
-            var j = Math.floor(Math.random() * (i + 1));
-            var temp = array[i];
-            array[i] = array[j];
-            array[j] = temp;
-        }
-        return array;
-    }
-
-    render() {
-        console.log('game state is rendered with state=' + this.state.gameState);
-        if (this.state.gameState == 'unknown') {
-            return 'Loading...';
-        } else if (this.state.gameState == '0') {
-            return e('div', null,
-                e(PoemSubmitBox, ({afterSubmit: this.asyncIncrement})),
-                e(SubmitPresetPoemButton, ({
-                    afterSubmit: this.asyncIncrement,
-                    poemName: "Snow-flakes by Longfellow",
-                    poemBody: `Out of the bosom of the Air,
+  render() {
+    console.log('game state is rendered with state=' + this.state.gameState);
+    if (this.state.gameState == 'unknown') {
+      return 'Loading...';
+    } else if (this.state.gameState == '0') {
+      return e('div', null,
+               e(PoemSubmitBox, ({afterSubmit : this.asyncIncrement})),
+               e(SubmitPresetPoemButton, ({
+                   afterSubmit : this.asyncIncrement,
+                   poemName : "Snow-flakes by Longfellow",
+                   poemBody : `Out of the bosom of the Air,
       Out of the cloud-folds of her garments shaken,
 Over the woodlands brown and bare,
       Over the harvest-fields forsaken,
@@ -120,11 +114,12 @@ This is the poem of the air,
 This is the secret of despair,
       Long in its cloudy bosom hoarded,
             Now whispered and revealed
-            To wood and field.`})),
-				e(SubmitPresetPoemButton, ({
-                    afterSubmit: this.asyncIncrement,
-                    poemName: "Loneliness by Robert Frost",
-                    poemBody: `One ought not to have to care
+            To wood and field.`
+                 })),
+               e(SubmitPresetPoemButton, ({
+                   afterSubmit : this.asyncIncrement,
+                   poemName : "Loneliness by Robert Frost",
+                   poemBody : `One ought not to have to care
 So much as you and I
 Care when the birds come round the house
 To seem to say good-bye;
@@ -137,11 +132,12 @@ Too glad for the one thing
 As we are too sad for the other here—
 With birds that fill their breasts
 But with each other and themselves
-And their built or driven nests.`})),
-                e(SubmitPresetPoemButton, ({
-                    afterSubmit: this.asyncIncrement,
-                    poemName: "The oft-repeated dream by Robert Frost",
-                    poemBody: `She had no saying dark enough
+And their built or driven nests.`
+                 })),
+               e(SubmitPresetPoemButton, ({
+                   afterSubmit : this.asyncIncrement,
+                   poemName : "The oft-repeated dream by Robert Frost",
+                   poemBody : `She had no saying dark enough
 For the dark pine that kept
 Forever trying the window latch
 Of the room where they slept.
@@ -154,11 +150,12 @@ Before the mystery of glass!
 It never had been inside the room,
 And only one of the two
 Was afraid in an oft-repeated dream
-Of what the tree might do.`})),
-                e(SubmitPresetPoemButton, ({
-                    afterSubmit: this.asyncIncrement,
-                    poemName: "My November Guest by Robert Frost",
-                    poemBody: `My sorrow, when she’s here with me,
+Of what the tree might do.`
+                 })),
+               e(SubmitPresetPoemButton, ({
+                   afterSubmit : this.asyncIncrement,
+                   poemName : "My November Guest by Robert Frost",
+                   poemBody : `My sorrow, when she’s here with me,
 Thinks these dark days of autumn rain
 Are beautiful as days can be;
 She loves the bare, the withered tree;
@@ -180,11 +177,12 @@ Not yesterday I learned to know
 The love of bare November days
 Before the coming of the snow,
 But it were vain to tell her so,
-And they are better for her praise.`})),
-                e(SubmitPresetPoemButton, ({
-                    afterSubmit: this.asyncIncrement,
-                    poemName: "A Dream by Edgar Allen Poe",
-                    poemBody: `In visions of the dark night
+And they are better for her praise.`
+                 })),
+               e(SubmitPresetPoemButton, ({
+                   afterSubmit : this.asyncIncrement,
+                   poemName : "A Dream by Edgar Allen Poe",
+                   poemBody : `In visions of the dark night
 I have dreamed of joy departed—
 But a waking dream of life and light
 Hath left me broken-hearted.
@@ -202,11 +200,12 @@ A lonely spirit guiding.
 What though that light, thro' storm and night,
 So trembled from afar—
 What could there be more purely bright
-In Truth's day-star?`})),
-                e(SubmitPresetPoemButton, ({
-                    afterSubmit: this.asyncIncrement,
-                    poemName: "Poem 632 by Emily Dickenson",
-                    poemBody: `The Brain--is wider than the Sky--
+In Truth's day-star?`
+                 })),
+               e(SubmitPresetPoemButton, ({
+                   afterSubmit : this.asyncIncrement,
+                   poemName : "Poem 632 by Emily Dickenson",
+                   poemBody : `The Brain--is wider than the Sky--
 For--put them side by side--
 The one the other will contain
 With ease--and You--beside
@@ -219,11 +218,12 @@ As Sponges--Buckets--do--
 The Brain is just the weight of God--
 For--Heft them--Pound for Pound--
 And they will differ--if they do--
-As Syllable from Sound--`})),
-                e(SubmitPresetPoemButton, ({
-                    afterSubmit: this.asyncIncrement,
-                    poemName: "Good Hours by Robert Frost",
-                    poemBody: `I had for my winter evening walk—
+As Syllable from Sound--`
+                 })),
+               e(SubmitPresetPoemButton, ({
+                   afterSubmit : this.asyncIncrement,
+                   poemName : "Good Hours by Robert Frost",
+                   poemBody : `I had for my winter evening walk—
 No one at all with whom to talk,
 But I had the cottages in a row
 Up to their shining eyes in snow.
@@ -241,11 +241,12 @@ I saw no window but that was black.
 Over the snow my creaking feet
 Disturbed the slumbering village street
 Like profanation, by your leave,
-At ten o'clock of a winter eve.`})),
-                e(SubmitPresetPoemButton, ({
-                    afterSubmit: this.asyncIncrement,
-                    poemName: "Bond and Free by Robert Frost",
-                    poemBody: `Love has earth to which she clings
+At ten o'clock of a winter eve.`
+                 })),
+               e(SubmitPresetPoemButton, ({
+                   afterSubmit : this.asyncIncrement,
+                   poemName : "Bond and Free by Robert Frost",
+                   poemBody : `Love has earth to which she clings
 With hills and circling arms about—
 Wall within wall to shut fear out.
 But Thought has need of no such things,
@@ -267,11 +268,12 @@ His gains in heaven are what they are.
 Yet some say Love by being thrall
 And simply staying possesses all
 In several beauty that Thought fares far
-To find fused in another star.`})),
-                e(SubmitPresetPoemButton, ({
-                    afterSubmit: this.asyncIncrement,
-                    poemName: "Eldorado by Edgar Allen Poe",
-                    poemBody: `Gaily bedight,
+To find fused in another star.`
+                 })),
+               e(SubmitPresetPoemButton, ({
+                   afterSubmit : this.asyncIncrement,
+                   poemName : "Eldorado by Edgar Allen Poe",
+                   poemBody : `Gaily bedight,
 A gallant knight,
 In sunshine and in shadow,
 Had journeyed long,
@@ -297,189 +299,179 @@ Of the Moon,
 Down the Valley of the Shadow,
 Ride, boldly ride,’
 The shade replied,—
-‘If you seek for Eldorado!’`}))
-            );
-        } else if (this.state.gameState == '1') {
-            return e("pre", null,
-                e(PoemDisplay, {poem: this.state.poem}),
-                e(EndingSubmitBox),
-                e(IncrementButton, {
-                    onClick: this.asyncIncrement,
-                    label: "All submissions are in"}),
-            );
-        } else if (this.state.gameState == '2') {
-            // TODO render voting boxes
-            return e('div', null,
-                e("pre", null,
-                e(PoemDisplay, {poem: this.state.poem}),
-                e(SubmissionsList, {submissions: this.state.endings})),
-                e('br'),
-                e(IncrementButton, {
-                    onClick: this.asyncIncrement,
-                    label: "Reveal answer",
-                })
-            );
-        } else if (this.state.gameState == '3') {
-            return e('div', null,
-                e("pre", null,
-                e(PoemDisplay, {poem: this.state.poem}),
-                e(SubmissionsList, {
-                    submissions: this.state.endings,
-                    realEnding: this.state.realEnding,
-                })),
-            );
-        } else {
-            return "Game state is invalid =" + this.state.gameState;
-        }
+‘If you seek for Eldorado!’`
+                 })));
+    } else if (this.state.gameState == '1') {
+      return e(
+          "pre",
+          null,
+          e(PoemDisplay, {poem : this.state.poem}),
+          e(EndingSubmitBox),
+          e(IncrementButton,
+            {onClick : this.asyncIncrement, label : "All submissions are in"}),
+      );
+    } else if (this.state.gameState == '2') {
+      // TODO render voting boxes
+      return e('div', null,
+               e("pre", null, e(PoemDisplay, {poem : this.state.poem}),
+                 e(SubmissionsList, {submissions : this.state.endings})),
+               e('br'), e(IncrementButton, {
+                 onClick : this.asyncIncrement,
+                 label : "Reveal answer",
+               }));
+    } else if (this.state.gameState == '3') {
+      return e(
+          'div',
+          null,
+          e("pre", null, e(PoemDisplay, {poem : this.state.poem}),
+            e(SubmissionsList, {
+              submissions : this.state.endings,
+              realEnding : this.state.realEnding,
+            })),
+      );
+    } else {
+      return "Game state is invalid =" + this.state.gameState;
     }
+  }
 }
 
 class SubmissionsList extends React.Component {
-    render() {
-        let submissions = this.props.submissions;
-        if (submissions == null) {
-            return "Loading submissions...";
-        }
-
-        // If we know the real ending, point to it
-        if (this.props.realEnding != null) {
-            for (let i = 0; i < submissions.length; i++) {
-                if (submissions[i] == this.props.realEnding) {
-                    submissions[i] = submissions[i] + " <------ REAL ENDING"
-                }
-            }
-        }
-
-        var listItems = submissions.map(
-            (submission) => e('li', {style: {
-                "margin": "0 0 10px 0",
-            }}, submission)
-        );
-        return e('ul', {style: {
-            "margin": "20px 0 20px 0",
-        }}, listItems);
+  render() {
+    let submissions = this.props.submissions;
+    if (submissions == null) {
+      return "Loading submissions...";
     }
+
+    // If we know the real ending, point to it
+    if (this.props.realEnding != null) {
+      for (let i = 0; i < submissions.length; i++) {
+        if (submissions[i] == this.props.realEnding) {
+          submissions[i] = submissions[i] + " <------ REAL ENDING"
+        }
+      }
+    }
+
+    var listItems = submissions.map((submission) => e('li', {
+                                      style : {
+                                        "margin" : "0 0 10px 0",
+                                      }
+                                    },
+                                                      submission));
+    return e('ul', {
+      style : {
+        "margin" : "20px 0 20px 0",
+      }
+    },
+             listItems);
+  }
 }
 
 class IncrementButton extends React.Component {
-    render() {
-        return e('button', {onClick: this.props.onClick}, this.props.label);
-    }
+  render() {
+    return e('button', {onClick : this.props.onClick}, this.props.label);
+  }
 }
 
 class PoemDisplay extends React.Component {
-    render() {
-        return this.props.poem;
-    }
+  render() { return this.props.poem; }
 }
 
 class SubmitPresetPoemButton extends React.Component {
-    constructor(props) {
-        super(props);
-        this.poemName = this.props.poemName;
-        this.poemBody = this.props.poemBody;
-        this.afterSubmit = this.props.afterSubmit;
-        this.onPresetSubmitBoxSubmit = this.onPresetSubmitBoxSubmit.bind(this);
-    }
+  constructor(props) {
+    super(props);
+    this.poemName = this.props.poemName;
+    this.poemBody = this.props.poemBody;
+    this.afterSubmit = this.props.afterSubmit;
+    this.onPresetSubmitBoxSubmit = this.onPresetSubmitBoxSubmit.bind(this);
+  }
 
-    onPresetSubmitBoxSubmit(event) {
-        console.log("SubmitPresetPoemButton onPresetSubmitBoxSubmit");
-        event.preventDefault();
-        this.sendPoem();
-        this.afterSubmit();
-    }
+  onPresetSubmitBoxSubmit(event) {
+    console.log("SubmitPresetPoemButton onPresetSubmitBoxSubmit");
+    event.preventDefault();
+    this.sendPoem();
+    this.afterSubmit();
+  }
 
-    sendPoem() {
-        sendPoemRequest(this.poemBody);
-    }
+  sendPoem() { sendPoemRequest(this.poemBody); }
 
-    render() {
-        return e(
-            'form', {
-                className: 'PresetSubmitForm',
-                onSubmit: () => {this.onPresetSubmitBoxSubmit(event)}
-            },
-            e('button', {type: 'submit'}, this.poemName)
-        );
-    };
+  render() {
+    return e('form', {
+      className : 'PresetSubmitForm',
+      onSubmit : () => { this.onPresetSubmitBoxSubmit(event) }
+    },
+             e('button', {type : 'submit'}, this.poemName));
+  };
 }
 
 class SubmitBox extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            value: '',
-            message: '',
-        };
-        this.rows = 15;
-        this.cols = 60;
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      value : '',
+      message : '',
+    };
+    this.rows = 15;
+    this.cols = 60;
+  }
 
-    onSubmitBoxSubmit(event) {
-        event.preventDefault();
-        console.log("SubmitBox onSubmitBoxSubmit()");
-    }
+  onSubmitBoxSubmit(event) {
+    event.preventDefault();
+    console.log("SubmitBox onSubmitBoxSubmit()");
+  }
 
-    handleChange(event) {
-        this.state.value = event.target.value;
-    }
+  handleChange(event) { this.state.value = event.target.value; }
 
-    render() {
-        return e(
-            'form', {
-                className: 'SubmitForm',
-                onSubmit: () => {this.onSubmitBoxSubmit(event)}
-            },
-            e('textarea', {
-                onChange: () => {this.handleChange(event)},
-                rows: this.rows,
-                cols: this.cols,
-            }),
-            e('br'),
-            e('button', {type: 'submit'}, this.label),
-            e('div', null, this.state.message)
-        );
-    }
+  render() {
+    return e('form', {
+      className : 'SubmitForm',
+      onSubmit : () => { this.onSubmitBoxSubmit(event) }
+    },
+             e('textarea', {
+               onChange : () => { this.handleChange(event) },
+               rows : this.rows,
+               cols : this.cols,
+             }),
+             e('br'), e('button', {type : 'submit'}, this.label),
+             e('div', null, this.state.message));
+  }
 }
 
 class PoemSubmitBox extends SubmitBox {
-    constructor(props) {
-        super(props);
-        this.label = "Submit new poem";
-        this.afterSubmit = this.props.afterSubmit;
-        this.onSubmitBoxSubmit = this.onSubmitBoxSubmit.bind(this);
-    }
+  constructor(props) {
+    super(props);
+    this.label = "Submit new poem";
+    this.afterSubmit = this.props.afterSubmit;
+    this.onSubmitBoxSubmit = this.onSubmitBoxSubmit.bind(this);
+  }
 
-    sendPoem() {
-        sendPoemRequest(this.state.value);
-    }
+  sendPoem() { sendPoemRequest(this.state.value); }
 
-    onSubmitBoxSubmit(event) {
-        event.preventDefault();
-        this.sendPoem();
-        this.afterSubmit();
-    }
+  onSubmitBoxSubmit(event) {
+    event.preventDefault();
+    this.sendPoem();
+    this.afterSubmit();
+  }
 }
 
 class EndingSubmitBox extends SubmitBox {
-    constructor(props) {
-        super(props);
-        this.label = "Submit ending";
-        this.rows = 5;
-    }
+  constructor(props) {
+    super(props);
+    this.label = "Submit ending";
+    this.rows = 5;
+  }
 
-    sendEnding() {
-        sendEndingRequest(this.state.value);
-        // TODO check for success
-        this.setState({
-            message: "Submitted",
-        });
-    }
+  sendEnding() {
+    sendEndingRequest(this.state.value);
+    // TODO check for success
+    this.setState({
+      message : "Submitted",
+    });
+  }
 
-    onSubmitBoxSubmit(event) {
-        event.preventDefault();
-        this.sendEnding();
-    }
+  onSubmitBoxSubmit(event) {
+    event.preventDefault();
+    this.sendEnding();
+  }
 }
 
 // these lines find the like_button_container div and display the react
