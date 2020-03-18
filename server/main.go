@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"strconv"
 	"strings"
@@ -44,8 +45,8 @@ func getKeyFromRequest(r *http.Request) (string, error) {
 	return key, nil
 }
 
-// Splits poem into start and ending and store them in poemStart and poemRealEnding.
-// Returns false if error occurs.
+// Splits poem into start and ending and store them in poemStart and
+// poemRealEnding. Returns false if error occurs.
 func parsePoem(poem string, key string) bool {
 	var emptyLineIdxs []int
 	poem = strings.TrimSpace(poem)
@@ -63,7 +64,8 @@ func parsePoem(poem string, key string) bool {
 	}
 
 	// what's the last stanza?
-	// it should be the last new line after which there are non-empty lines.
+	// it should be the last new line after which there are non-empty
+	// lines.
 	lineBreakIdxToUse := emptyLineIdxs[len(emptyLineIdxs)-1]
 	poemStart[key] = strings.Join(poemLines[0:lineBreakIdxToUse], "\n") + "\n"
 	poemRealEnding[key] = strings.Join(poemLines[lineBreakIdxToUse+1:], "\n")
@@ -94,9 +96,15 @@ func nextStateHandler(w http.ResponseWriter, r *http.Request) {
 	if currentGameState[key] >= 4 {
 		currentGameState[key] = 0
 	}
+	fmt.Print("nextStateHandler state=", currentGameState[key])
+	if currentGameState[key] == 2 {
+		endings[key] = append(endings[key], poemRealEnding[key])
+		shuffleEndings(key)
+	}
 }
 
 func setStateHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Print("setStateHandler")
 	enableCors(&w)
 	key, _ := getKeyFromRequest(r)
 	body, readErr := ioutil.ReadAll(r.Body)
@@ -111,6 +119,13 @@ func setStateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	currentGameState[key] = state
+}
+
+func shuffleEndings(key string) {
+	a := endings[key]
+	rand.Shuffle(len(a), func(i, j int) { a[i], a[j] = a[j], a[i] })
+	endings[key] = a
+	fmt.Print("shuffling now, a=", a)
 }
 
 func submitEndingHandler(w http.ResponseWriter, r *http.Request) {
@@ -130,7 +145,6 @@ func getEndingsHandler(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	key, _ := getKeyFromRequest(r)
 	resp := make(map[string][]string)
-	resp["endings"] = append(resp["endings"], poemRealEnding[key])
 	for _, ending := range endings[key] {
 		resp["endings"] = append(resp["endings"], ending)
 	}

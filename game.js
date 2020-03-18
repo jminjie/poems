@@ -59,7 +59,7 @@ class Game extends React.Component {
   async asyncGetEndings() {
     console.log("asyncGetEndings");
     this.setState({
-      endings : this.shuffle(await getEndings()),
+      endings : await getEndings(),
     });
   }
 
@@ -73,16 +73,6 @@ class Game extends React.Component {
   async asyncIncrement() {
     console.log("asyncIncrement");
     incrementGameState();
-  }
-
-  shuffle(array) {
-    for (var i = array.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var temp = array[i];
-      array[i] = array[j];
-      array[j] = temp;
-    }
-    return array;
   }
 
   render() {
@@ -475,10 +465,10 @@ class EndingSubmitBox extends SubmitBox {
 }
 
 class Start extends React.Component {
-    render() {
-        let r = Math.random().toString(36).substring(7);
-        return e('a', {href: "/?key=" + r}, "Click here to create a room");
-    }
+  render() {
+    let r = Math.random().toString(36).substring(7);
+    return e('a', {href : "/?key=" + r}, "Click here to create a room");
+  }
 }
 
 // If no key, generate one or let the user enter
@@ -486,16 +476,16 @@ var urlParams = new URLSearchParams(window.location.search);
 var entries = urlParams.entries();
 var keyFound = false;
 for (var pair of entries) {
-    if (pair[0] == "key") {
-        keyFound = true;
-    }
+  if (pair[0] == "key") {
+    keyFound = true;
+  }
 }
 // these lines find the like_button_container div and display the react
 // component inside it
 if (keyFound) {
-    const domContainer = document.querySelector('#game');
-    ReactDOM.render(e(Game), domContainer);
+  const domContainer = document.querySelector('#game');
+  ReactDOM.render(e(Game), domContainer);
 } else {
-    const domContainer = document.querySelector('#game');
-    ReactDOM.render(e(Start), domContainer);
+  const domContainer = document.querySelector('#game');
+  ReactDOM.render(e(Start), domContainer);
 }
