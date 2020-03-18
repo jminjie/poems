@@ -1,7 +1,7 @@
 # The Poems Game
 A Balderdash-style game for poetry.
 
-![Recorded demo](https://github.com/jminjie/poems/blob/master/demo.gif)
+![Recorded demo](https://github.com/jminjie/poems/blob/master/new-demo.gif)
 
 ## Rules to the game
 - First you can create a room or invite others to a created room by sharing the link.
