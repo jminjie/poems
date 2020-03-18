@@ -12,7 +12,7 @@ A Balderdash-style game for poetry.
 
 - Spend 10-15 minutes writing your own versions of the last stanza. It's useful to have a time cap here especially if you have some perfectionists in your group. Once everyone has submitted their version (remember to pay attention to formatting and indentation), one person hits the "All submission are in" button.
 
-- All ending submissions will be displayed in a random order (currently the order varies by client, but it would be nice to randomize the order on the server). Read them and talk about them.
+- All ending submissions will be displayed in a random order (everyone gets the same order). Read them and talk about them.
 
 - Hit the "reveal" button to see the real ending.
 
