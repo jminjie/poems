@@ -1,8 +1,8 @@
 // const SERVER_URL = 'http://192.168.86.84:8080/';
-const SERVER_URL = 'http://localhost:8080/';
+const SERVER_URL = 'http://52.53.211.246:5001/';
 
 const GAME_STATE_URL = 'getGameState';
-const INCREMENT_URL = 'nextState';
+const SET_URL = 'setState';
 const SUBMIT_POEM_URL = 'submitFullPoem';
 const POEM_URL = 'getPoem';
 const SUBMIT_ENDING_URL = 'submitEnding';
@@ -24,7 +24,7 @@ function keySuffix() {
   return "";
 }
 
-function setGameState(state) { testGameState = state }
+function setTestGameState(state) { testGameState = state }
 var testGameStatePromise = {
   json() {
     return new Promise(
@@ -94,8 +94,11 @@ async function getRealEnding() {
   }
 }
 
-function incrementGameState() {
-  return fetch(SERVER_URL + INCREMENT_URL + keySuffix());
+function setGameState(state) {
+  if (!TEST_MODE) {
+    return fetch(SERVER_URL + SET_URL + keySuffix(),
+                 {method : "POST", body : state});
+  }
 }
 
 function sendPoemRequest(submission) {
