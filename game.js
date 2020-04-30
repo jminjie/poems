@@ -81,7 +81,9 @@ class Game extends React.Component {
       return 'Loading...';
     } else if (this.state.gameState == '0') {
       return e('div', null,
+               e('div', null, 'Submit the full text of a poem with stanzas separated by blank lines'),
                e(PoemSubmitBox, ({afterSubmit : this.asyncIncrement})),
+               e('div', null, 'Or select a pre-included poem below:'),
                e(SubmitPresetPoemButton, ({
                    afterSubmit : this.asyncIncrement,
                    poemName : "Snow-flakes by Longfellow",
@@ -446,7 +448,7 @@ class PoemSubmitBox extends SubmitBox {
 class EndingSubmitBox extends SubmitBox {
   constructor(props) {
     super(props);
-    this.label = "Submit ending";
+    this.label = "Submit your ending";
     this.rows = 5;
   }
 
