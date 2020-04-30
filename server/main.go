@@ -88,21 +88,6 @@ func getGameStateHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(strconv.Itoa(currentGameState[key])))
 }
 
-// DEPRECATED
-func nextStateHandler(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
-	key, _ := getKeyFromRequest(r)
-	currentGameState[key] += 1
-	if currentGameState[key] >= 4 {
-		currentGameState[key] = 0
-	}
-	fmt.Print("nextStateHandler state=", currentGameState[key])
-	if currentGameState[key] == 2 {
-		endings[key] = append(endings[key], poemRealEnding[key])
-		shuffleEndings(key)
-	}
-}
-
 func setStateHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Print("setStateHandler")
 	enableCors(&w)
@@ -119,6 +104,11 @@ func setStateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	currentGameState[key] = state
+	fmt.Print("setStateHandler state=", currentGameState[key])
+	if currentGameState[key] == 2 {
+		endings[key] = append(endings[key], poemRealEnding[key])
+		shuffleEndings(key)
+	}
 }
 
 func shuffleEndings(key string) {
@@ -162,7 +152,6 @@ func main() {
 	flag.Parse()
 	http.HandleFunc("/getGameState", getGameStateHandler)
 	http.HandleFunc("/submitFullPoem", submitFullPoemHandler)
-	http.HandleFunc("/nextState", nextStateHandler)
 	http.HandleFunc("/setState", setStateHandler)
 	http.HandleFunc("/submitEnding", submitEndingHandler)
 	http.HandleFunc("/getPoem", getPoemHandler)
