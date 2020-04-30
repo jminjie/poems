@@ -6,7 +6,7 @@ const e = React.createElement;
 // 2 = see all submissions and vote
 // 3 = see results
 // TODO this is just for testing
-setGameState(1);
+//setTestGameState(0);
 
 class Game extends React.Component {
   constructor(props) {
@@ -70,9 +70,19 @@ class Game extends React.Component {
     });
   }
 
-  async asyncIncrement() {
-    console.log("asyncIncrement");
-    incrementGameState();
+  async asyncSetState1() {
+      console.log("asyncSetState1");
+      setGameState('1');
+  }
+
+  async asyncSetState2() {
+      console.log("asyncSetState2");
+      setGameState('2');
+  }
+
+  async asyncSetState3() {
+      console.log("asyncSetState3");
+      setGameState('3');
   }
 
   render() {
@@ -82,10 +92,10 @@ class Game extends React.Component {
     } else if (this.state.gameState == '0') {
       return e('div', null,
                e('div', null, 'Submit the full text of a poem with stanzas separated by blank lines'),
-               e(PoemSubmitBox, ({afterSubmit : this.asyncIncrement})),
+               e(PoemSubmitBox, ({afterSubmit : this.asyncSetState1})),
                e('div', null, 'Or select a pre-included poem below:'),
                e(SubmitPresetPoemButton, ({
-                   afterSubmit : this.asyncIncrement,
+                   afterSubmit : this.asyncSetState1,
                    poemName : "Snow-flakes by Longfellow",
                    poemBody : `Out of the bosom of the Air,
       Out of the cloud-folds of her garments shaken,
@@ -109,7 +119,7 @@ This is the secret of despair,
             To wood and field.`
                  })),
                e(SubmitPresetPoemButton, ({
-                   afterSubmit : this.asyncIncrement,
+                   afterSubmit : this.asyncSetState1,
                    poemName : "Loneliness by Robert Frost",
                    poemBody : `One ought not to have to care
 So much as you and I
@@ -127,7 +137,7 @@ But with each other and themselves
 And their built or driven nests.`
                  })),
                e(SubmitPresetPoemButton, ({
-                   afterSubmit : this.asyncIncrement,
+                   afterSubmit : this.asyncSetState1,
                    poemName : "The oft-repeated dream by Robert Frost",
                    poemBody : `She had no saying dark enough
 For the dark pine that kept
@@ -145,7 +155,7 @@ Was afraid in an oft-repeated dream
 Of what the tree might do.`
                  })),
                e(SubmitPresetPoemButton, ({
-                   afterSubmit : this.asyncIncrement,
+                   afterSubmit : this.asyncSetState1,
                    poemName : "My November Guest by Robert Frost",
                    poemBody : `My sorrow, when she’s here with me,
 Thinks these dark days of autumn rain
@@ -172,7 +182,7 @@ But it were vain to tell her so,
 And they are better for her praise.`
                  })),
                e(SubmitPresetPoemButton, ({
-                   afterSubmit : this.asyncIncrement,
+                   afterSubmit : this.asyncSetState1,
                    poemName : "A Dream by Edgar Allen Poe",
                    poemBody : `In visions of the dark night
 I have dreamed of joy departed—
@@ -195,7 +205,7 @@ What could there be more purely bright
 In Truth's day-star?`
                  })),
                e(SubmitPresetPoemButton, ({
-                   afterSubmit : this.asyncIncrement,
+                   afterSubmit : this.asyncSetState1,
                    poemName : "Poem 632 by Emily Dickenson",
                    poemBody : `The Brain--is wider than the Sky--
 For--put them side by side--
@@ -213,7 +223,7 @@ And they will differ--if they do--
 As Syllable from Sound--`
                  })),
                e(SubmitPresetPoemButton, ({
-                   afterSubmit : this.asyncIncrement,
+                   afterSubmit : this.asyncSetState1,
                    poemName : "Good Hours by Robert Frost",
                    poemBody : `I had for my winter evening walk—
 No one at all with whom to talk,
@@ -236,7 +246,7 @@ Like profanation, by your leave,
 At ten o'clock of a winter eve.`
                  })),
                e(SubmitPresetPoemButton, ({
-                   afterSubmit : this.asyncIncrement,
+                   afterSubmit : this.asyncSetState1,
                    poemName : "Bond and Free by Robert Frost",
                    poemBody : `Love has earth to which she clings
 With hills and circling arms about—
@@ -263,7 +273,7 @@ In several beauty that Thought fares far
 To find fused in another star.`
                  })),
                e(SubmitPresetPoemButton, ({
-                   afterSubmit : this.asyncIncrement,
+                   afterSubmit : this.asyncSetState1,
                    poemName : "Eldorado by Edgar Allen Poe",
                    poemBody : `Gaily bedight,
 A gallant knight,
@@ -300,7 +310,7 @@ The shade replied,—
           e(PoemDisplay, {poem : this.state.poem}),
           e(EndingSubmitBox),
           e(IncrementButton,
-            {onClick : this.asyncIncrement, label : "All submissions are in"}),
+            {onClick : this.asyncSetState2, label : "All submissions are in"}),
       );
     } else if (this.state.gameState == '2') {
       // TODO render voting boxes
@@ -308,7 +318,7 @@ The shade replied,—
                e("pre", null, e(PoemDisplay, {poem : this.state.poem}),
                  e(SubmissionsList, {submissions : this.state.endings})),
                e('br'), e(IncrementButton, {
-                 onClick : this.asyncIncrement,
+                 onClick : this.asyncSetState3,
                  label : "Reveal answer",
                }));
     } else if (this.state.gameState == '3') {
