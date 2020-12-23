@@ -90,6 +90,7 @@ wss.on("connection", ws => {
         data_for_room = data.substring(6);
         if (!all_games.has(room)) {
             all_games.set(room, new Game());
+            console.log("Creating new game. There are now " + all_games.size + " active games.");
         }
         all_games.get(room).handleData(data_for_room, ws);
     })
@@ -100,6 +101,10 @@ wss.on("connection", ws => {
     function removePlayer(value, key, map) {
         if (value.all_players.has(ws)) {
             value.all_players.delete(ws);
+            if (value.all_players.size == 0) {
+                console.log("All players left game " + key + ". Deleting room.");
+                all_games.delete(key);
+            }
         }
     }
     ws.on("close", () => {
