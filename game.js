@@ -328,18 +328,19 @@ The shade replied,—
 
 class SubmissionsList extends React.Component {
     render() {
-        let submissions = this.props.submissions;
-        if (submissions == null) {
+        if (this.props.submissions == null) {
             return "Loading submissions...";
         }
 
+        // create a copy of submissions so that when render is called many times we don't keep
+        // appending the real ending label
+        let submissions = []
+        for (let i = 0; i < this.props.submissions.length; i++) {
+            submissions.push(this.props.submissions[i]);
+        }
         // If we know the real ending, point to it
         if (this.props.realEnding != null) {
-            for (let i = 0; i < submissions.length; i++) {
-                if (i == this.props.realEnding) {
-                    submissions[i] = submissions[i] + " <------ REAL ENDING"
-                }
-            }
+            submissions[this.props.realEnding] = submissions[this.props.realEnding] + " <------ REAL ENDING"
         }
 
         var listItems = submissions.map((submission) => e('li', {
