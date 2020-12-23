@@ -5,99 +5,73 @@ const e = React.createElement;
 // 1 = submit your own ending
 // 2 = see all submissions and vote
 // 3 = see results
-// TODO this is just for testing
-//setTestGameState(0);
 
 class Game extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      gameState : 'unknown',
-      poem : 'not set',
-      endings : [ "dummy ending 1", "dummy ending 2" ],
-    };
-    this.refresh();
-  }
+    constructor(props) {
+        super(props);
+        this.state = {
+            gameState : 'unknown',
+            poem : 'not set',
+            endings : [ "dummy ending 1", "dummy ending 2" ],
+        };
 
-  componentDidMount() { this.timer = setInterval(() => this.refresh(), 2000); }
+        this.ws = new WebSocket("ws://54.177.197.224:5049");
+        this.ws.addEventListener("open", () => {
+            console.log("Opened websocket");
+            this.ws.send(keySuffix() + "join");
+        });
 
-  componentWillUnmount() { this.timer = null; }
+        this.ws.addEventListener("message", ({ data }) => {
+            console.log(data);
+            var state = data.substring(0, 7);
+            if (state == "state 0") {
+                this.setState({
+                    gameState : "0",
+                });
+            } else if (state == "state 1") {
+                this.setState({
+                    gameState : "1",
+                    poem : data.substring(7),
+                });
+            } else if (state == "state 2" ) {
+                this.setState({
+                    gameState : "2",
+                    endings : JSON.parse(data.substring(7)),
+                });
+            } else if (state == "state 3" ) {
+                this.setState({
+                    gameState : "3",
+                    realEnding : JSON.parse(data.substring(7)),
+                });
+            }
+        });
 
-  async refresh() {
-    var oldState = this.state.gameState;
-    await this.asyncGetGameState();
-    if (oldState != this.state.gameState) {
-      if (this.state.gameState == '1') {
-        this.asyncGetPoem();
-      } else if (this.state.gameState == '2') {
-        this.asyncGetEndings();
-      } else if (this.state.gameState == '3') {
-        this.asyncGetRealEnding();
-      }
+        this.notifyAllSubmissionsIn = this.notifyAllSubmissionsIn.bind(this);
+        this.revealAnswer = this.revealAnswer.bind(this);
+
     }
-  }
 
-  handleAsyncError(error) { console.log("handleAsyncError: error=" + error); }
-
-  async asyncGetGameState() {
-    console.log("asyncGetGameState");
-    let result = await getGameState();
-    if (this.state.gameState != result) {
-      this.setState({
-        gameState : result,
-      });
+    async notifyAllSubmissionsIn() {
+        this.ws.send(keySuffix() + "all-submissions-in");
     }
-  }
 
-  async asyncGetPoem() {
-    console.log("asyncGetPoem");
-    this.setState({
-      poem : await getPoem(),
-    });
-  }
 
-  async asyncGetEndings() {
-    console.log("asyncGetEndings");
-    this.setState({
-      endings : await getEndings(),
-    });
-  }
+    async revealAnswer() {
+        this.ws.send(keySuffix() + "reveal");
+    }
 
-  async asyncGetRealEnding() {
-    console.log("asyncGetRealEnding");
-    this.setState({
-      realEnding : await getRealEnding(),
-    });
-  }
-
-  async asyncSetState1() {
-      console.log("asyncSetState1");
-      setGameState('1');
-  }
-
-  async asyncSetState2() {
-      console.log("asyncSetState2");
-      setGameState('2');
-  }
-
-  async asyncSetState3() {
-      console.log("asyncSetState3");
-      setGameState('3');
-  }
-
-  render() {
-    console.log('game state is rendered with state=' + this.state.gameState);
-    if (this.state.gameState == 'unknown') {
-      return 'Loading...';
-    } else if (this.state.gameState == '0') {
-      return e('div', null,
-               e('div', null, 'Submit the full text of a poem with stanzas separated by blank lines'),
-               e(PoemSubmitBox, ({afterSubmit : this.asyncSetState1})),
-               e('div', null, 'Or select a pre-included poem below:'),
-               e(SubmitPresetPoemButton, ({
-                   afterSubmit : this.asyncSetState1,
-                   poemName : "Snow-flakes by Longfellow",
-                   poemBody : `Out of the bosom of the Air,
+    render() {
+        console.log('game state is rendered with state=' + this.state.gameState);
+        if (this.state.gameState == 'unknown') {
+            return 'Loading...';
+        } else if (this.state.gameState == '0') {
+            return e('div', null,
+                e(PoemSubmitBox, ({ws : this.ws})),
+                e(SubmitPresetPoemButton, ({
+                    afterSubmit : this.sendPoem,
+                    ws : this.ws,
+                    poemName : "Snow-flakes by Longfellow",
+                    poemBody : `Out of the bosom of the Air,
       Out of the cloud-folds of her garments shaken,
 Over the woodlands brown and bare,
       Over the harvest-fields forsaken,
@@ -117,11 +91,12 @@ This is the secret of despair,
       Long in its cloudy bosom hoarded,
             Now whispered and revealed
             To wood and field.`
-                 })),
-               e(SubmitPresetPoemButton, ({
-                   afterSubmit : this.asyncSetState1,
-                   poemName : "Loneliness by Robert Frost",
-                   poemBody : `One ought not to have to care
+                })),
+                e(SubmitPresetPoemButton, ({
+                    afterSubmit : this.sendPoem,
+                    ws : this.ws,
+                    poemName : "Loneliness by Robert Frost",
+                    poemBody : `One ought not to have to care
 So much as you and I
 Care when the birds come round the house
 To seem to say good-bye;
@@ -135,11 +110,12 @@ As we are too sad for the other here—
 With birds that fill their breasts
 But with each other and themselves
 And their built or driven nests.`
-                 })),
-               e(SubmitPresetPoemButton, ({
-                   afterSubmit : this.asyncSetState1,
-                   poemName : "The oft-repeated dream by Robert Frost",
-                   poemBody : `She had no saying dark enough
+                })),
+                e(SubmitPresetPoemButton, ({
+                    afterSubmit : this.sendPoem,
+                    ws : this.ws,
+                    poemName : "The oft-repeated dream by Robert Frost",
+                    poemBody : `She had no saying dark enough
 For the dark pine that kept
 Forever trying the window latch
 Of the room where they slept.
@@ -153,11 +129,12 @@ It never had been inside the room,
 And only one of the two
 Was afraid in an oft-repeated dream
 Of what the tree might do.`
-                 })),
-               e(SubmitPresetPoemButton, ({
-                   afterSubmit : this.asyncSetState1,
-                   poemName : "My November Guest by Robert Frost",
-                   poemBody : `My sorrow, when she’s here with me,
+                })),
+                e(SubmitPresetPoemButton, ({
+                    afterSubmit : this.sendPoem,
+                    ws : this.ws,
+                    poemName : "My November Guest by Robert Frost",
+                    poemBody : `My sorrow, when she’s here with me,
 Thinks these dark days of autumn rain
 Are beautiful as days can be;
 She loves the bare, the withered tree;
@@ -180,11 +157,12 @@ The love of bare November days
 Before the coming of the snow,
 But it were vain to tell her so,
 And they are better for her praise.`
-                 })),
-               e(SubmitPresetPoemButton, ({
-                   afterSubmit : this.asyncSetState1,
-                   poemName : "A Dream by Edgar Allen Poe",
-                   poemBody : `In visions of the dark night
+                })),
+                e(SubmitPresetPoemButton, ({
+                    afterSubmit : this.sendPoem,
+                    ws : this.ws,
+                    poemName : "A Dream by Edgar Allen Poe",
+                    poemBody : `In visions of the dark night
 I have dreamed of joy departed—
 But a waking dream of life and light
 Hath left me broken-hearted.
@@ -203,11 +181,12 @@ What though that light, thro' storm and night,
 So trembled from afar—
 What could there be more purely bright
 In Truth's day-star?`
-                 })),
-               e(SubmitPresetPoemButton, ({
-                   afterSubmit : this.asyncSetState1,
-                   poemName : "Poem 632 by Emily Dickenson",
-                   poemBody : `The Brain--is wider than the Sky--
+                })),
+                e(SubmitPresetPoemButton, ({
+                    afterSubmit : this.sendPoem,
+                    ws : this.ws,
+                    poemName : "Poem 632 by Emily Dickenson",
+                    poemBody : `The Brain--is wider than the Sky--
 For--put them side by side--
 The one the other will contain
 With ease--and You--beside
@@ -221,11 +200,12 @@ The Brain is just the weight of God--
 For--Heft them--Pound for Pound--
 And they will differ--if they do--
 As Syllable from Sound--`
-                 })),
-               e(SubmitPresetPoemButton, ({
-                   afterSubmit : this.asyncSetState1,
-                   poemName : "Good Hours by Robert Frost",
-                   poemBody : `I had for my winter evening walk—
+                })),
+                e(SubmitPresetPoemButton, ({
+                    afterSubmit : this.sendPoem,
+                    ws : this.ws,
+                    poemName : "Good Hours by Robert Frost",
+                    poemBody : `I had for my winter evening walk—
 No one at all with whom to talk,
 But I had the cottages in a row
 Up to their shining eyes in snow.
@@ -244,11 +224,12 @@ Over the snow my creaking feet
 Disturbed the slumbering village street
 Like profanation, by your leave,
 At ten o'clock of a winter eve.`
-                 })),
-               e(SubmitPresetPoemButton, ({
-                   afterSubmit : this.asyncSetState1,
-                   poemName : "Bond and Free by Robert Frost",
-                   poemBody : `Love has earth to which she clings
+                })),
+                e(SubmitPresetPoemButton, ({
+                    afterSubmit : this.sendPoem,
+                    ws : this.ws,
+                    poemName : "Bond and Free by Robert Frost",
+                    poemBody : `Love has earth to which she clings
 With hills and circling arms about—
 Wall within wall to shut fear out.
 But Thought has need of no such things,
@@ -271,11 +252,12 @@ Yet some say Love by being thrall
 And simply staying possesses all
 In several beauty that Thought fares far
 To find fused in another star.`
-                 })),
-               e(SubmitPresetPoemButton, ({
-                   afterSubmit : this.asyncSetState1,
-                   poemName : "Eldorado by Edgar Allen Poe",
-                   poemBody : `Gaily bedight,
+                })),
+                e(SubmitPresetPoemButton, ({
+                    afterSubmit : this.sendPoem,
+                    ws : this.ws,
+                    poemName : "Eldorado by Edgar Allen Poe",
+                    poemBody : `Gaily bedight,
 A gallant knight,
 In sunshine and in shadow,
 Had journeyed long,
@@ -302,185 +284,175 @@ Down the Valley of the Shadow,
 Ride, boldly ride,’
 The shade replied,—
 ‘If you seek for Eldorado!’`
-                 })));
-    } else if (this.state.gameState == '1') {
-      return e(
-          "pre",
-          null,
-          e(PoemDisplay, {poem : this.state.poem}),
-          e(EndingSubmitBox),
-          e(IncrementButton,
-            {onClick : this.asyncSetState2, label : "All submissions are in"}),
-      );
-    } else if (this.state.gameState == '2') {
-      // TODO render voting boxes
-      return e('div', null,
-               e("pre", null, e(PoemDisplay, {poem : this.state.poem}),
-                 e(SubmissionsList, {submissions : this.state.endings})),
-               e('br'), e(IncrementButton, {
-                 onClick : this.asyncSetState3,
-                 label : "Reveal answer",
-               }));
-    } else if (this.state.gameState == '3') {
-      return e(
-          'div',
-          null,
-          e("pre", null, e(PoemDisplay, {poem : this.state.poem}),
-            e(SubmissionsList, {
-              submissions : this.state.endings,
-              realEnding : this.state.realEnding,
-            })),
-      );
-    } else {
-      return "Game state is invalid =" + this.state.gameState;
+                })));
+        } else if (this.state.gameState == '1') {
+            return e(
+                "pre",
+                null,
+                e(PoemDisplay, {poem : this.state.poem}),
+                e(EndingSubmitBox, {ws : this.ws}),
+                e(IncrementButton,
+                    {onClick : this.notifyAllSubmissionsIn, label : "All submissions are in"}),
+            );
+        } else if (this.state.gameState == '2') {
+            // TODO render voting boxes
+            return e('div', null,
+                e("pre", null, e(PoemDisplay, {poem : this.state.poem}),
+                    e(SubmissionsList, {submissions : this.state.endings})),
+                e('br'), e(IncrementButton, {
+                    onClick : this.revealAnswer,
+                    label : "Reveal answer",
+                }));
+        } else if (this.state.gameState == '3') {
+            return e(
+                'div',
+                null,
+                e("pre", null, e(PoemDisplay, {poem : this.state.poem}),
+                    e(SubmissionsList, {
+                        submissions : this.state.endings,
+                        realEnding : this.state.realEnding,
+                    })),
+            );
+        } else {
+            return "Game state is invalid =" + this.state.gameState;
+        }
     }
-  }
 }
 
 class SubmissionsList extends React.Component {
-  render() {
-    let submissions = this.props.submissions;
-    if (submissions == null) {
-      return "Loading submissions...";
-    }
-
-    // If we know the real ending, point to it
-    if (this.props.realEnding != null) {
-      for (let i = 0; i < submissions.length; i++) {
-        if (submissions[i] == this.props.realEnding) {
-          submissions[i] = submissions[i] + " <------ REAL ENDING"
+    render() {
+        let submissions = this.props.submissions;
+        if (submissions == null) {
+            return "Loading submissions...";
         }
-      }
-    }
 
-    var listItems = submissions.map((submission) => e('li', {
-                                      style : {
-                                        "margin" : "0 0 10px 0",
-                                      }
-                                    },
-                                                      submission));
-    return e('ul', {
-      style : {
-        "margin" : "20px 0 20px 0",
-      }
-    },
-             listItems);
-  }
+        // If we know the real ending, point to it
+        if (this.props.realEnding != null) {
+            for (let i = 0; i < submissions.length; i++) {
+                if (i == this.props.realEnding) {
+                    submissions[i] = submissions[i] + " <------ REAL ENDING"
+                }
+            }
+        }
+
+        var listItems = submissions.map((submission) => e('li', {
+            style : {
+                "margin" : "0 0 10px 0",
+            }
+        },
+            submission));
+        return e('ul', {
+            style : {
+                "margin" : "20px 0 20px 0",
+            }
+        },
+            listItems);
+    }
 }
 
 class IncrementButton extends React.Component {
-  render() {
-    return e('button', {onClick : this.props.onClick}, this.props.label);
-  }
+    render() {
+        return e('button', {onClick : this.props.onClick}, this.props.label);
+    }
 }
 
 class PoemDisplay extends React.Component {
-  render() { return this.props.poem; }
+    render() { return this.props.poem; }
 }
 
 class SubmitPresetPoemButton extends React.Component {
-  constructor(props) {
-    super(props);
-    this.poemName = this.props.poemName;
-    this.poemBody = this.props.poemBody;
-    this.afterSubmit = this.props.afterSubmit;
-    this.onPresetSubmitBoxSubmit = this.onPresetSubmitBoxSubmit.bind(this);
-  }
+    constructor(props) {
+        super(props);
+        this.poemName = this.props.poemName;
+        this.poemBody = this.props.poemBody;
+        this.ws = this.props.ws;
+        this.onPresetSubmitBoxSubmit = this.onPresetSubmitBoxSubmit.bind(this);
+    }
 
-  onPresetSubmitBoxSubmit(event) {
-    console.log("SubmitPresetPoemButton onPresetSubmitBoxSubmit");
-    event.preventDefault();
-    this.sendPoem();
-    this.afterSubmit();
-  }
+    onPresetSubmitBoxSubmit(event) {
+        console.log("SubmitPresetPoemButton onPresetSubmitBoxSubmit");
+        event.preventDefault();
+        this.ws.send(keySuffix() + this.poemName + "\n\n" + this.poemBody);
+    }
 
-  sendPoem() { sendPoemRequest(this.poemBody); }
-
-  render() {
-    return e('form', {
-      className : 'PresetSubmitForm',
-      onSubmit : () => { this.onPresetSubmitBoxSubmit(event) }
-    },
-             e('button', {type : 'submit'}, this.poemName));
-  };
+    render() {
+        return e('form', {
+            className : 'PresetSubmitForm',
+            onSubmit : () => { this.onPresetSubmitBoxSubmit(event) }
+        },
+            e('button', {type : 'submit'}, this.poemName));
+    };
 }
 
 class SubmitBox extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value : '',
-      message : '',
-    };
-    this.rows = 15;
-    this.cols = 60;
-  }
+    constructor(props) {
+        super(props);
+        this.state = {
+            value : '',
+            message : '',
+        };
+        this.rows = 15;
+        this.cols = 60;
+    }
 
-  onSubmitBoxSubmit(event) {
-    event.preventDefault();
-    console.log("SubmitBox onSubmitBoxSubmit()");
-  }
+    onSubmitBoxSubmit(event) {
+        event.preventDefault();
+        console.log("SubmitBox onSubmitBoxSubmit()");
+    }
 
-  handleChange(event) { this.state.value = event.target.value; }
+    handleChange(event) { this.state.value = event.target.value; }
 
-  render() {
-    return e('form', {
-      className : 'SubmitForm',
-      onSubmit : () => { this.onSubmitBoxSubmit(event) }
-    },
-             e('textarea', {
-               onChange : () => { this.handleChange(event) },
-               rows : this.rows,
-               cols : this.cols,
-             }),
-             e('br'), e('button', {type : 'submit'}, this.label),
-             e('div', null, this.state.message));
-  }
+    render() {
+        return e('form', {
+            className : 'SubmitForm',
+            onSubmit : () => { this.onSubmitBoxSubmit(event) }
+        },
+            e('textarea', {
+                onChange : () => { this.handleChange(event) },
+                rows : this.rows,
+                cols : this.cols,
+            }),
+            e('br'), e('button', {type : 'submit'}, this.label),
+            e('div', null, this.state.message));
+    }
 }
 
 class PoemSubmitBox extends SubmitBox {
-  constructor(props) {
-    super(props);
-    this.label = "Submit new poem";
-    this.afterSubmit = this.props.afterSubmit;
-    this.onSubmitBoxSubmit = this.onSubmitBoxSubmit.bind(this);
-  }
+    constructor(props) {
+        super(props);
+        this.label = "Submit new poem";
+        this.ws = this.props.ws;
+        this.onSubmitBoxSubmit = this.onSubmitBoxSubmit.bind(this);
+    }
 
-  sendPoem() { sendPoemRequest(this.state.value); }
-
-  onSubmitBoxSubmit(event) {
-    event.preventDefault();
-    this.sendPoem();
-    this.afterSubmit();
-  }
+    onSubmitBoxSubmit(event) {
+        event.preventDefault();
+        this.ws.send(keySuffix() + this.state.value);
+    }
 }
 
 class EndingSubmitBox extends SubmitBox {
-  constructor(props) {
-    super(props);
-    this.label = "Submit your ending";
-    this.rows = 5;
-  }
+    constructor(props) {
+        super(props);
+        this.label = "Submit ending";
+        this.rows = 5;
+        this.ws = this.props.ws;
+    }
 
-  sendEnding() {
-    sendEndingRequest(this.state.value);
-    // TODO check for success
-    this.setState({
-      message : "Submitted",
-    });
-  }
-
-  onSubmitBoxSubmit(event) {
-    event.preventDefault();
-    this.sendEnding();
-  }
+    onSubmitBoxSubmit(event) {
+        event.preventDefault();
+        this.ws.send(keySuffix() + this.state.value);
+        this.setState({
+            message : "Submitted",
+        });
+    }
 }
 
 class Start extends React.Component {
-  render() {
-    let r = Math.random().toString(36).substring(7);
-    return e('a', {href : "/?key=" + r}, "Click here to create a room");
-  }
+    render() {
+        let r = Math.random().toString(36).substring(7);
+        return e('a', {href : "/?key=" + r}, "Click here to create a room");
+    }
 }
 
 // If no key, generate one or let the user enter
@@ -488,16 +460,16 @@ var urlParams = new URLSearchParams(window.location.search);
 var entries = urlParams.entries();
 var keyFound = false;
 for (var pair of entries) {
-  if (pair[0] == "key") {
-    keyFound = true;
-  }
+    if (pair[0] == "key") {
+        keyFound = true;
+    }
 }
 // these lines find the like_button_container div and display the react
 // component inside it
 if (keyFound) {
-  const domContainer = document.querySelector('#game');
-  ReactDOM.render(e(Game), domContainer);
+    const domContainer = document.querySelector('#game');
+    ReactDOM.render(e(Game), domContainer);
 } else {
-  const domContainer = document.querySelector('#game');
-  ReactDOM.render(e(Start), domContainer);
+    const domContainer = document.querySelector('#game');
+    ReactDOM.render(e(Start), domContainer);
 }
