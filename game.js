@@ -67,6 +67,7 @@ class Game extends React.Component {
         } else if (this.state.gameState == '0') {
             return e('div', null,
                 e(PoemSubmitBox, ({ws : this.ws})),
+                e('h3', null, "Choose from preset poems below"),
                 e(SubmitPresetPoemButton, ({
                     afterSubmit : this.sendPoem,
                     ws : this.ws,
@@ -420,7 +421,7 @@ class SubmitBox extends React.Component {
 class PoemSubmitBox extends SubmitBox {
     constructor(props) {
         super(props);
-        this.label = "Submit new poem";
+        this.label = "Submit custom poem";
         this.ws = this.props.ws;
         this.onSubmitBoxSubmit = this.onSubmitBoxSubmit.bind(this);
     }
