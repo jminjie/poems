@@ -40,11 +40,13 @@ class Game {
         // first handle special messages
         if (data == "join") {
             this.all_players.add(ws);
+            sendNumPlayersToAllPlayers(this.all_players);
             if (this.state == 0) {
                 ws.send("state " + this.state);
             } else if (this.state == 1) {
                 ws.send("state " + this.state + this.poem_start);
             } else if (this.state == 2) {
+                // TODO if players joins late they don't see poem start or shuffled endings
                 ws.send("state " + this.state + JSON.stringify(this.shuffled_endings));
             } else if (this.state == 3) {
                 ws.send("state " + this.state + this.true_ending_index);
@@ -101,6 +103,7 @@ wss.on("connection", ws => {
     function removePlayer(value, key, map) {
         if (value.all_players.has(ws)) {
             value.all_players.delete(ws);
+            sendNumPlayersToAllPlayers(value.all_players);
             if (value.all_players.size == 0) {
                 console.log("All players left game " + key + ". Deleting room.");
                 all_games.delete(key);
@@ -111,6 +114,12 @@ wss.on("connection", ws => {
         all_games.forEach(removePlayer);
     })
 });
+
+function sendNumPlayersToAllPlayers(players_set) {
+    for (let player of players_set.values()) {
+        player.send("numplay" + players_set.size);
+    }
+}
 
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
