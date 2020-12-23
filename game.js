@@ -450,7 +450,8 @@ class EndingSubmitBox extends SubmitBox {
 
 class Start extends React.Component {
     render() {
-        let r = Math.random().toString(36).substring(7);
+        // gemerate 6 random chars
+        let r = (Math.random().toString(36)+'00000000000000000').slice(2, 6+2)
         return e('a', {href : "/?key=" + r}, "Click here to create a room");
     }
 }
