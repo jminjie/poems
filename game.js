@@ -43,6 +43,10 @@ class Game extends React.Component {
                     gameState : "3",
                     realEnding : JSON.parse(data.substring(7)),
                 });
+            } else if (state == "numplay") {
+                this.setState({
+                    numPlayers : JSON.parse(data.substring(7)),
+                });
             }
         });
 
@@ -66,6 +70,7 @@ class Game extends React.Component {
             return 'Loading...';
         } else if (this.state.gameState == '0') {
             return e('div', null,
+                e('h4', null, "Number of players currently in this game: " + this.state.numPlayers),
                 e(PoemSubmitBox, ({ws : this.ws})),
                 e('h3', null, "Choose from preset poems below"),
                 e(SubmitPresetPoemButton, ({
@@ -287,17 +292,19 @@ The shade replied,—
 ‘If you seek for Eldorado!’`
                 })));
         } else if (this.state.gameState == '1') {
-            return e(
-                "pre",
-                null,
-                e(PoemDisplay, {poem : this.state.poem}),
-                e(EndingSubmitBox, {ws : this.ws}),
-                e(IncrementButton,
-                    {onClick : this.notifyAllSubmissionsIn, label : "All submissions are in"}),
+            return e("div", null,
+                e('h4', null, "Number of players currently in this game: " + this.state.numPlayers),
+                e("pre", null,
+                    e(PoemDisplay, {poem : this.state.poem}),
+                    e(EndingSubmitBox, {ws : this.ws}),
+                    e(IncrementButton,
+                        {onClick : this.notifyAllSubmissionsIn, label : "All submissions are in"}),
+                )
             );
         } else if (this.state.gameState == '2') {
             // TODO render voting boxes
             return e('div', null,
+                e('h4', null, "Number of players currently in this game: " + this.state.numPlayers),
                 e("pre", null, e(PoemDisplay, {poem : this.state.poem}),
                     e(SubmissionsList, {submissions : this.state.endings})),
                 e('br'), e(IncrementButton, {
@@ -305,9 +312,8 @@ The shade replied,—
                     label : "Reveal answer",
                 }));
         } else if (this.state.gameState == '3') {
-            return e(
-                'div',
-                null,
+            return e('div', null,
+                e('h4', null, "Number of players currently in this game: " + this.state.numPlayers),
                 e("pre", null, e(PoemDisplay, {poem : this.state.poem}),
                     e(SubmissionsList, {
                         submissions : this.state.endings,
