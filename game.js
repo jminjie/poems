@@ -43,6 +43,10 @@ class Game extends React.Component {
                     gameState : "3",
                     realEnding : JSON.parse(data.substring(7)),
                 });
+            } else if (state == "numplay") {
+                this.setState({
+                    numPlayers : JSON.parse(data.substring(7)),
+                });
             }
         });
 
@@ -66,7 +70,9 @@ class Game extends React.Component {
             return 'Loading...';
         } else if (this.state.gameState == '0') {
             return e('div', null,
+                e('h4', null, "Number of players currently in this game: " + this.state.numPlayers),
                 e(PoemSubmitBox, ({ws : this.ws})),
+                e('h3', null, "Choose from preset poems below"),
                 e(SubmitPresetPoemButton, ({
                     afterSubmit : this.sendPoem,
                     ws : this.ws,
@@ -286,17 +292,19 @@ The shade replied,—
 ‘If you seek for Eldorado!’`
                 })));
         } else if (this.state.gameState == '1') {
-            return e(
-                "pre",
-                null,
-                e(PoemDisplay, {poem : this.state.poem}),
-                e(EndingSubmitBox, {ws : this.ws}),
-                e(IncrementButton,
-                    {onClick : this.notifyAllSubmissionsIn, label : "All submissions are in"}),
+            return e("div", null,
+                e('h4', null, "Number of players currently in this game: " + this.state.numPlayers),
+                e("pre", null,
+                    e(PoemDisplay, {poem : this.state.poem}),
+                    e(EndingSubmitBox, {ws : this.ws}),
+                    e(IncrementButton,
+                        {onClick : this.notifyAllSubmissionsIn, label : "All submissions are in"}),
+                )
             );
         } else if (this.state.gameState == '2') {
             // TODO render voting boxes
             return e('div', null,
+                e('h4', null, "Number of players currently in this game: " + this.state.numPlayers),
                 e("pre", null, e(PoemDisplay, {poem : this.state.poem}),
                     e(SubmissionsList, {submissions : this.state.endings})),
                 e('br'), e(IncrementButton, {
@@ -304,9 +312,8 @@ The shade replied,—
                     label : "Reveal answer",
                 }));
         } else if (this.state.gameState == '3') {
-            return e(
-                'div',
-                null,
+            return e('div', null,
+                e('h4', null, "Number of players currently in this game: " + this.state.numPlayers),
                 e("pre", null, e(PoemDisplay, {poem : this.state.poem}),
                     e(SubmissionsList, {
                         submissions : this.state.endings,
@@ -321,18 +328,19 @@ The shade replied,—
 
 class SubmissionsList extends React.Component {
     render() {
-        let submissions = this.props.submissions;
-        if (submissions == null) {
+        if (this.props.submissions == null) {
             return "Loading submissions...";
         }
 
+        // create a copy of submissions so that when render is called many times we don't keep
+        // appending the real ending label
+        let submissions = []
+        for (let i = 0; i < this.props.submissions.length; i++) {
+            submissions.push(this.props.submissions[i]);
+        }
         // If we know the real ending, point to it
         if (this.props.realEnding != null) {
-            for (let i = 0; i < submissions.length; i++) {
-                if (i == this.props.realEnding) {
-                    submissions[i] = submissions[i] + " <------ REAL ENDING"
-                }
-            }
+            submissions[this.props.realEnding] = submissions[this.props.realEnding] + " <------ REAL ENDING"
         }
 
         var listItems = submissions.map((submission) => e('li', {
@@ -420,7 +428,7 @@ class SubmitBox extends React.Component {
 class PoemSubmitBox extends SubmitBox {
     constructor(props) {
         super(props);
-        this.label = "Submit new poem";
+        this.label = "Submit custom poem";
         this.ws = this.props.ws;
         this.onSubmitBoxSubmit = this.onSubmitBoxSubmit.bind(this);
     }
@@ -450,7 +458,8 @@ class EndingSubmitBox extends SubmitBox {
 
 class Start extends React.Component {
     render() {
-        let r = Math.random().toString(36).substring(7);
+        // gemerate 6 random chars
+        let r = (Math.random().toString(36)+'00000000000000000').slice(2, 6+2)
         return e('a', {href : "/?key=" + r}, "Click here to create a room");
     }
 }
