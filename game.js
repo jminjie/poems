@@ -71,8 +71,8 @@ class Game extends React.Component {
         } else if (this.state.gameState == '0') {
             return e('div', null,
                 e('h4', null, "Number of players currently in this game: " + this.state.numPlayers),
-                e(PoemSubmitBox, ({ws : this.ws})),
                 e('h3', null, "Choose from preset poems below"),
+                e('div', {className: 'whitebox buttons'},
                 e(SubmitPresetPoemButton, ({
                     afterSubmit : this.sendPoem,
                     ws : this.ws,
@@ -290,12 +290,16 @@ Down the Valley of the Shadow,
 Ride, boldly ride,’
 The shade replied,—
 ‘If you seek for Eldorado!’`
-                })));
+                }))),
+                e('h3', null, "Or submit a new poem"),
+                e(PoemSubmitBox, ({ws : this.ws})),
+            );
         } else if (this.state.gameState == '1') {
-            return e("div", null,
+            return e("div", null, 
                 e('h4', null, "Number of players currently in this game: " + this.state.numPlayers),
-                e("pre", null,
-                    e(PoemDisplay, {poem : this.state.poem}),
+                e('div', {className: "whitebox"},
+                    e("pre", null,
+                        e(PoemDisplay, {poem : this.state.poem})),
                     e(EndingSubmitBox, {ws : this.ws}),
                     e(IncrementButton,
                         {onClick : this.notifyAllSubmissionsIn, label : "All submissions are in"}),
@@ -305,16 +309,18 @@ The shade replied,—
             // TODO render voting boxes
             return e('div', null,
                 e('h4', null, "Number of players currently in this game: " + this.state.numPlayers),
-                e("pre", null, e(PoemDisplay, {poem : this.state.poem}),
-                    e(SubmissionsList, {submissions : this.state.endings})),
-                e('br'), e(IncrementButton, {
-                    onClick : this.revealAnswer,
-                    label : "Reveal answer",
-                }));
+                e('div', {className: "whitebox"},
+                    e("pre", null, e(PoemDisplay, {poem : this.state.poem}),
+                        e(SubmissionsList, {submissions : this.state.endings})),
+                    e('br'), e(IncrementButton, {
+                        onClick : this.revealAnswer,
+                        label : "Reveal answer",
+                    }
+                )));
         } else if (this.state.gameState == '3') {
             return e('div', null,
                 e('h4', null, "Number of players currently in this game: " + this.state.numPlayers),
-                e("pre", null, e(PoemDisplay, {poem : this.state.poem}),
+                e("pre", {className: "whitebox"}, e(PoemDisplay, {poem : this.state.poem}),
                     e(SubmissionsList, {
                         submissions : this.state.endings,
                         realEnding : this.state.realEnding,
@@ -399,8 +405,9 @@ class SubmitBox extends React.Component {
             value : '',
             message : '',
         };
-        this.rows = 15;
-        this.cols = 60;
+        this.rows = 16;
+        this.cols = 70;
+        this.placeholder = "";
     }
 
     onSubmitBoxSubmit(event) {
@@ -408,19 +415,22 @@ class SubmitBox extends React.Component {
         console.log("SubmitBox onSubmitBoxSubmit()");
     }
 
-    handleChange(event) { this.state.value = event.target.value; }
+    handleChange(event) {
+        this.state.value = event.target.value;
+    }
 
     render() {
         return e('form', {
-            className : 'SubmitForm',
-            onSubmit : () => { this.onSubmitBoxSubmit(event) }
-        },
+                className : 'SubmitForm',
+                onSubmit : () => { this.onSubmitBoxSubmit(event) }
+            },
             e('textarea', {
                 onChange : () => { this.handleChange(event) },
                 rows : this.rows,
                 cols : this.cols,
+                placeholder : this.placeholder,
             }),
-            e('br'), e('button', {type : 'submit'}, this.label),
+            e('button', {type : 'submit'}, this.label),
             e('div', null, this.state.message));
     }
 }
@@ -431,12 +441,14 @@ class PoemSubmitBox extends SubmitBox {
         this.label = "Submit custom poem";
         this.ws = this.props.ws;
         this.onSubmitBoxSubmit = this.onSubmitBoxSubmit.bind(this);
+        this.placeholder = "Title of poem\n\nFirst stanza of the poem\nGoes like this, we're all alone\nAnd then one night I saw her face\nShining like my mother's vase\n\nSecond stanza goes along\nThere's nothing left when all is gone\nSearch inside yourself to find\nThe limitations of your mind\n\n<The third stanza will be hidden from\nthe players of the game until\nAll endings are in and then\nit will be displayed with the fake endings>";
     }
 
     onSubmitBoxSubmit(event) {
         event.preventDefault();
         this.ws.send(keySuffix() + this.state.value);
     }
+
 }
 
 class EndingSubmitBox extends SubmitBox {
@@ -445,14 +457,21 @@ class EndingSubmitBox extends SubmitBox {
         this.label = "Submit ending";
         this.rows = 5;
         this.ws = this.props.ws;
+        this.placeholder = "Player's custom ending goes here\nMake sure to pay attention to\n    spacing\nand punctuation.";
     }
 
     onSubmitBoxSubmit(event) {
         event.preventDefault();
-        this.ws.send(keySuffix() + this.state.value);
-        this.setState({
-            message : "Submitted",
-        });
+        if (this.state.value == "") {
+            this.setState({
+                message : "Submission cannot be empty.",
+            });
+        } else {
+            this.ws.send(keySuffix() + this.state.value);
+            this.setState({
+                message : "Submitted",
+            });
+        }
     }
 }
 
@@ -460,7 +479,7 @@ class Start extends React.Component {
     render() {
         // gemerate 6 random chars
         let r = (Math.random().toString(36)+'00000000000000000').slice(2, 6+2)
-        return e('a', {href : "/?key=" + r}, "Click here to create a room");
+        return e('h3', {className:"createroom"}, e('a', {href : "/?key=" + r, className: "whitebox"}, "Click here to create a room"));
     }
 }
 
