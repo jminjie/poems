@@ -7,6 +7,13 @@ body {
 font-family: Roboto, sans-serif;
 }
 
+@media only screen and (max-width: 600px) {
+    body {
+        width: 95%;
+    }
+}
+
+
 h1 {
     font-family: 'Kirang Haerang', cursive;
     font-size: 3em;

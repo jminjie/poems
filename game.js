@@ -14,7 +14,7 @@ class Game extends React.Component {
             endings : [ "dummy ending 1", "dummy ending 2" ],
         };
 
-        this.ws = new WebSocket(SERVER);
+        this.ws = new WebSocket(LOCALHOST);
         this.ws.addEventListener("open", () => {
             console.log("Opened websocket");
             this.ws.send(keySuffix() + "join");
@@ -612,27 +612,27 @@ That Mushroom - it is Him!`,
 No better than spoons,
 And bags full of leaves
 Are light as balloons.
- 
+
 I make a great noise
 Of rustling all day
 Like rabbit and deer
 Running away.
- 
+
 But the mountains I raise
 Elude my embrace,
 Flowing over my arms
 And into my face.
- 
+
 I may load and unload
 Again and again
 Till I fill the whole shed,
 And what have I then?
- 
+
 Next to nothing for weight,
 And since they grew duller
 From contact with earth,
 Next to nothing for color.
- 
+
 Next to nothing for use,
 But a crop is a crop,
 And who’s to say where
@@ -641,17 +641,17 @@ The harvest shall stop?`,
 To read the gravestones on the hill;
 The graveyard draws the living still,
 But never any more the dead.
- 
+
 The verses in it say and say:
 ‘The ones who living come today
 To read the stones and go away
 Tomorrow dead will come to stay.’
- 
+
 So sure of death the marbles rhyme,
 Yet can’t help marking all the time
 How no one dead will seem to come.
 What is it men are shrinking from?
- 
+
 It would be easy to be clever
 And tell the stones: Men hate to die
 And have stopped dying now forever.
@@ -684,17 +684,17 @@ And see you pleased once more with words of mine?`,
      The wind once blew itself untaught,
 And did its loudest day and night
      In any rough place where it caught.
- 
+
 Man came to tell it what was wrong:
      It hadn’t found the place to blow;
 It blew too hard—the aim was song.
      And listen—how it ought to go!
- 
+
 He took a little in his mouth,
      And held it long enough for north
 To be converted into south,
      And then by measure blew it forth.
- 
+
 By measure. It was word and note,
      The wind the wind had meant to be—
 A little through the lips and throat.
