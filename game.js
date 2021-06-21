@@ -69,60 +69,25 @@ class Game extends React.Component {
         if (this.state.gameState == 'unknown') {
             return 'Loading...';
         } else if (this.state.gameState == '0') {
+            let poem_elements = [];
+            for (let i = 0; i < POEM_NAMES.length; i++) {
+                poem_elements.push(e(SubmitPresetPoemButton, ({
+                    ws : this.ws,
+                    poemName : POEM_NAMES[i],
+                    poemBody : POEMS[i],
+                    key : i,
+                })));
+            }
             return e('div', null,
                 e('h4', null, "Number of players currently in this game: " + this.state.numPlayers),
                 e('h3', null, "Choose a poem"),
                 e('div', {className: 'whitebox buttons'},
-                e(SubmitRandomPoemButton, ({
-                    ws : this.ws,
-                })),
+                    e(SubmitRandomPoemButton, ({
+                        ws : this.ws,
+                    })),
                     e('br', null),
                     e('br', null),
-                e(SubmitPresetPoemButton, ({
-                    ws : this.ws,
-                    poemName : POEM_NAMES[0],
-                    poemBody : POEMS[0],
-                })),
-                e(SubmitPresetPoemButton, ({
-                    ws : this.ws,
-                    poemName : POEM_NAMES[1],
-                    poemBody : POEMS[1],
-                })),
-                e(SubmitPresetPoemButton, ({
-                    ws : this.ws,
-                    poemName : POEM_NAMES[2],
-                    poemBody : POEMS[2],
-                })),
-                e(SubmitPresetPoemButton, ({
-                    ws : this.ws,
-                    poemName : POEM_NAMES[3],
-                    poemBody : POEMS[3],
-                })),
-                e(SubmitPresetPoemButton, ({
-                    ws : this.ws,
-                    poemName : POEM_NAMES[4],
-                    poemBody : POEMS[4],
-                })),
-                e(SubmitPresetPoemButton, ({
-                    ws : this.ws,
-                    poemName : POEM_NAMES[5],
-                    poemBody : POEMS[5],
-                })),
-                e(SubmitPresetPoemButton, ({
-                    ws : this.ws,
-                    poemName : POEM_NAMES[6],
-                    poemBody : POEMS[6],
-                })),
-                e(SubmitPresetPoemButton, ({
-                    ws : this.ws,
-                    poemName : POEM_NAMES[7],
-                    poemBody : POEMS[7],
-                })),
-                e(SubmitPresetPoemButton, ({
-                    ws : this.ws,
-                    poemName : POEM_NAMES[8],
-                    poemBody : POEMS[8],
-                }))),
+                poem_elements),
                 e('h3', null, "Or submit a new poem"),
                 e('div', {className: "whitebox"},
                 e(PoemSubmitBox, ({ws : this.ws})),
@@ -585,7 +550,7 @@ is roofless around nothing. Till we kiss
 I am no more than upright and unset.
 It is by falling in and in we make
 the all-bearing point, for one another’s sake,
-in faultless failing, raised by our own weight.`
+in faultless failing, raised by our own weight.`,
 `More oblique the eagle’s angle
 than the osprey’s precipitous fall,
 but rose up both and under them dangled
