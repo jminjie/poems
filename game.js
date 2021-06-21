@@ -374,7 +374,25 @@ if (keyFound) {
     ReactDOM.render(e(Start), domContainer);
 }
 
-const POEM_NAMES = ["Snow-flakes by Longfellow", "Loneliness by Robert Frost", "The oft-repeated dream by Robert Frost","My November Guest by Robert Frost", "A Dream by Edgar Allen Poe", "Poem 632 by Emily Dickenson", "Good Hours by Robert Frost", "Bond and Free by Robert Frost", "Eldorado by Edgar Allen Poe"];
+const POEM_NAMES = [
+"Snow-flakes by Longfellow",
+"Loneliness by Robert Frost",
+"The oft-repeated dream by Robert Frost",
+"My November Guest by Robert Frost",
+"A Dream by Edgar Allen Poe",
+"Poem 632 by Emily Dickenson",
+"Good Hours by Robert Frost",
+"Bond and Free by Robert Frost",
+"Eldorado by Edgar Allen Poe",
+"Most Like an Arch This Marriage by John Ciardi",
+"Might Have Been July, Might Have Been December by Robert Wrigley",
+"Letter from the Estuary by Erik Kennedy",
+"The Mushroom is the Elf of Plants by Emily Dickinson",
+"Gathering Leaves by Robert Frost",
+"In a Disused Graveyard by Robert Frost",
+"To E.T. by Robert Frost",
+"The Aim Was Song by Robert Frost"
+];
 
 const POEMS = [`Out of the bosom of the Air,
       Out of the cloud-folds of her garments shaken,
@@ -548,5 +566,172 @@ Of the Moon,
 Down the Valley of the Shadow,
 Ride, boldly ride,’
 The shade replied,—
-‘If you seek for Eldorado!’`];
+‘If you seek for Eldorado!’`,
+`Most like an arch—an entrance which upholds
+and shores the stone-crush up the air like lace.
+Mass made idea, and idea held in place.
+A lock in time. Inside half-heaven unfolds.
 
+Most like an arch—two weaknesses that lean
+into a strength. Two fallings become firm.
+Two joined abeyances become a term
+naming the fact that teaches fact to mean.
+
+Not quite that? Not much less. World as it is,
+what’s strong and separate falters. All I do
+at piling stone on stone apart from you
+is roofless around nothing. Till we kiss
+
+I am no more than upright and unset.
+It is by falling in and in we make
+the all-bearing point, for one another’s sake,
+in faultless failing, raised by our own weight.`
+`More oblique the eagle’s angle
+than the osprey’s precipitous fall,
+but rose up both and under them dangled
+a trout, the point of it all.
+
+Festooned, a limb on each one’s
+favored tree either side of the river,
+with chains of bone and lace of skin
+the river’s wind made shiver.
+
+Sat under them both, one in December,
+one in July, in diametrical seasonal airs,
+and once arrived home, as I remember,
+with a thin white fish rib lodged in my hair.`,
+`Two feet of snow at my parents’ place, in another season.
+Here, the cicadas sing like Christian women’s choirs
+in a disused cotton mill. Belief is a kind of weather.
+I haven’t seen proper snow for three years.
+
+The new urban forest for native plants and birds
+will be splendid if the local cats don’t kill the birds.
+The problem is, all my sympathies are with the cats.
+The friendly disturbers are more endearing than what they disturb.
+
+A trimaran called 3rd Degree spinning around its cable in the channel:
+that’s how love is here and should be everywhere.
+It seems so unserious or contentedly ironic;
+it’s the kind of thing you either look through or ignore.
+
+But you’d be wrong. The question isn’t: Why is love so strange here?
+It’s: Why did it feel normal somewhere else?
+In quiet places, the present is just gossip about the past.
+The future is a critique of that. All my best.`,
+`The Mushroom is the Elf of Plants -
+At Evening, it is not
+At Morning, in a Truffled Hut
+It stop opon a Spot
+
+As if it tarried always
+And yet it’s whole Career
+Is shorter than a Snake’s Delay -
+And fleeter than a Tare -
+
+’Tis Vegetation’s Juggler -
+The Germ of Alibi -
+Doth like a Bubble antedate
+And like a Bubble, hie -
+
+I feel as if the Grass was pleased
+To have it intermit -
+This surreptitious Scion
+Of Summer’s circumspect.
+
+Had Nature any supple Face
+Or could she one contemn -
+Had Nature an Apostate -
+That Mushroom - it is Him!`,
+`Spades take up leaves
+No better than spoons,
+And bags full of leaves
+Are light as balloons.
+ 
+I make a great noise
+Of rustling all day
+Like rabbit and deer
+Running away.
+ 
+But the mountains I raise
+Elude my embrace,
+Flowing over my arms
+And into my face.
+ 
+I may load and unload
+Again and again
+Till I fill the whole shed,
+And what have I then?
+ 
+Next to nothing for weight,
+And since they grew duller
+From contact with earth,
+Next to nothing for color.
+ 
+Next to nothing for use,
+But a crop is a crop,
+And who’s to say where
+The harvest shall stop?`,
+`The living come with grassy tread
+To read the gravestones on the hill;
+The graveyard draws the living still,
+But never any more the dead.
+ 
+The verses in it say and say:
+‘The ones who living come today
+To read the stones and go away
+Tomorrow dead will come to stay.’
+ 
+So sure of death the marbles rhyme,
+Yet can’t help marking all the time
+How no one dead will seem to come.
+What is it men are shrinking from?
+ 
+It would be easy to be clever
+And tell the stones: Men hate to die
+And have stopped dying now forever.
+I think they would believe the lie.`,
+`I slumbered with your poems on my breast
+Spread open as I dropped them half-read through
+Like dove wings on a figure on a tomb
+To see, if in a dream they brought of you,
+
+I might not have the chance I missed in life
+Through some delay, and call you to your face
+First soldier, and then poet, and then both,
+Who died a soldier-poet of your race.
+
+I meant, you meant, that nothing should remain
+Unsaid between us, brother, and this remained—
+And one thing more that was not then to say:
+The Victory for what it lost and gained.
+
+You went to meet the shell's embrace of fire
+On Vimy Ridge; and when you fell that day
+The war seemed over more for you than me,
+But now for me than you—the other way.
+
+How over, though, for even me who knew
+The foe thrust back unsafe beyond the Rhine,
+If I was not to speak of it to you
+And see you pleased once more with words of mine?`,
+    `Before man came to blow it right
+     The wind once blew itself untaught,
+And did its loudest day and night
+     In any rough place where it caught.
+ 
+Man came to tell it what was wrong:
+     It hadn’t found the place to blow;
+It blew too hard—the aim was song.
+     And listen—how it ought to go!
+ 
+He took a little in his mouth,
+     And held it long enough for north
+To be converted into south,
+     And then by measure blew it forth.
+ 
+By measure. It was word and note,
+     The wind the wind had meant to be—
+A little through the lips and throat.
+     The aim was song—the wind could see.`
+];
