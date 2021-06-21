@@ -46,9 +46,14 @@ class Game {
             } else if (this.state == 1) {
                 ws.send("state " + this.state + this.poem_start);
             } else if (this.state == 2) {
-                // TODO if players joins late they don't see poem start or shuffled endings
+                // if players joins late or refresh the page, we need to repopulate poem_start
+                ws.send("state 1" + this.poem_start);
                 ws.send("state " + this.state + JSON.stringify(this.shuffled_endings));
             } else if (this.state == 3) {
+                // if players joins late or refresh the page, we need to
+                // repopulate poem_start and endings
+                ws.send("state 1" + this.poem_start);
+                ws.send("state 2" + this.state + JSON.stringify(this.shuffled_endings));
                 ws.send("state " + this.state + this.true_ending_index);
             }
             return;

@@ -18,6 +18,10 @@ h3 {
 	line-height: 0em;
 }
 
+a {
+    text-decoration: none;
+}
+
 pre {
     font-size: 1.5em;
     white-space:pre-wrap;
@@ -77,7 +81,7 @@ background: lightgrey;
 }
 
 .content {
-    display: block;
+    display: none;
     overflow: hidden;
     font-size: 1.2em;
 }

@@ -70,12 +70,13 @@ class Game extends React.Component {
         } else if (this.state.gameState == '0') {
             return e('div', null,
                 e('h4', null, "Number of players currently in this game: " + this.state.numPlayers),
-                e('h3', null, "Use a random poem"),
+                e('h3', null, "Choose a poem"),
+                e('div', {className: 'whitebox buttons'},
                 e(SubmitRandomPoemButton, ({
                     ws : this.ws,
                 })),
-                e('h3', null, "Or choose from preset poems below"),
-                e('div', {className: 'whitebox buttons'},
+                    e('br', null),
+                    e('br', null),
                 e(SubmitPresetPoemButton, ({
                     ws : this.ws,
                     poemName : POEM_NAMES[0],
@@ -122,7 +123,9 @@ class Game extends React.Component {
                     poemBody : POEMS[8],
                 }))),
                 e('h3', null, "Or submit a new poem"),
+                e('div', {className: "whitebox"},
                 e(PoemSubmitBox, ({ws : this.ws})),
+                )
             );
         } else if (this.state.gameState == '1') {
             return e("div", null, 
@@ -150,11 +153,18 @@ class Game extends React.Component {
         } else if (this.state.gameState == '3') {
             return e('div', null,
                 e('h4', null, "Number of players currently in this game: " + this.state.numPlayers),
-                e("pre", {className: "whitebox"}, e(PoemDisplay, {poem : this.state.poem}),
-                    e(SubmissionsList, {
-                        submissions : this.state.endings,
-                        realEnding : this.state.realEnding,
+                e('div', {className: "whitebox"},
+                    e("pre", null, e(PoemDisplay, {poem : this.state.poem}),
+                        e(SubmissionsList, {
+                            submissions : this.state.endings,
+                            realEnding : this.state.realEnding,
                     })),
+                    e('br'), e(IncrementButton, {
+                        onClick : this.revealAnswer,
+                        disabled: true,
+                        label : "Reveal answer",
+                    })
+                )
             );
         } else {
             return "Game state is invalid =" + this.state.gameState;
@@ -196,7 +206,10 @@ class SubmissionsList extends React.Component {
 
 class IncrementButton extends React.Component {
     render() {
-        return e('button', {onClick : this.props.onClick}, this.props.label);
+        return e('button', {
+            onClick : this.props.onClick,
+            disabled : this.props.disabled,
+        }, this.props.label);
     }
 }
 
@@ -294,10 +307,19 @@ class PoemSubmitBox extends SubmitBox {
 
     onSubmitBoxSubmit(event) {
         event.preventDefault();
-        this.ws.send(keySuffix() + this.state.value);
-        event.target.value = "";
+        if (this.state.value == "") {
+            this.setState({
+                message : "Submission cannot be empty.",
+            });
+        } else if (!this.state.value.includes("\n\n")) {
+            this.setState({
+                message : "Submission must have at least 2 stanzas.",
+            });
+        } else {
+            this.ws.send(keySuffix() + this.state.value);
+            event.target.value = "";
+        }
     }
-
 }
 
 class EndingSubmitBox extends SubmitBox {
