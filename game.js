@@ -55,6 +55,7 @@ class Game extends React.Component {
     }
 
     async notifyAllSubmissionsIn() {
+        // TODO this shouldn't be allowed if no submissions are in.
         this.ws.send(keySuffix() + "all-submissions-in");
     }
 
