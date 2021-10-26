@@ -33,26 +33,6 @@ h1 {
 }
 
 
-@media(max-width: 1000px) {
-    button {
-        font-size: 3em;
-        border: 0.05em solid;
-        margin: 0.1em;
-    }
-
-    h3 {
-        font-size: 4em;
-    }
-
-    h1 {
-        font-size: 5em;
-    }
-
-    .collapsible {
-        font-size: 1em;
-    }
-}
-
 
 a {
     text-decoration: none;
@@ -113,3 +93,28 @@ background: lightgrey;
     font-size: 1.2em;
 }
 
+
+
+@media(max-width: 1000px) {
+    button {
+        font-size: 3em;
+        border: 0.05em solid;
+        margin: 0.1em;
+    }
+
+    h3 {
+        font-size: 4em;
+    }
+
+    h1 {
+        font-size: 5em;
+    }
+
+   .createroom {
+        font-size: 3.7em;
+    }
+
+    .collapsible {
+        font-size: 1em;
+    }
+}
