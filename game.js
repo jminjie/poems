@@ -222,7 +222,7 @@ class SubmitRandomPoemButton extends SubmitPresetPoemButton {
             className : 'PresetSubmitForm',
             onSubmit : () => { this.onPresetSubmitBoxSubmit(event) }
         },
-            e('button', {type : 'submit'}, "Random poem"));
+            e('button', {type : 'submit', className : 'rand'}, "Random poem"));
     };
 }
 
