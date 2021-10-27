@@ -316,7 +316,7 @@ class Start extends React.Component {
     render() {
         // gemerate 6 random chars
         let r = (Math.random().toString(36)+'00000000000000000').slice(2, 6+2)
-        return e('h3', {className:"createroom"}, e('a', {href : "/?key=" + r, className: "whitebox"}, "Click here to create a room"));
+        return e('h3', {className:"createroom"}, e('a', {href : "/?key=" + r, className: "whitebox"}, "create a room"));
     }
 }
 
