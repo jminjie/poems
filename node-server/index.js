@@ -1,5 +1,14 @@
 const WebSocket = require("ws");
-const wss = new WebSocket.Server({ port: 5049 });
+const https = require("https");
+const fs = require("fs");
+
+var httpsServer = https.createServer({
+        key: fs.readFileSync('/etc/letsencrypt/live/poems.jminjie.com/privkey.pem', 'utf8'),
+        cert: fs.readFileSync('/etc/letsencrypt/live/poems.jminjie.com/fullchain.pem', 'utf8')
+    }
+).listen(5049);
+
+const wss = new WebSocket.Server({server: httpsServer});
 
 class Game {
     // Game states are as follows:

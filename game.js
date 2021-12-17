@@ -2,8 +2,8 @@
 
 const e = React.createElement;
 
-const SERVER = "ws://54.177.197.224:5049";
-const LOCALHOST = "ws://localhost:5049";
+const SERVER = "wss://poems.jminjie.com:5049";
+const LOCALHOST = "wss://localhost:5049";
 
 class Game extends React.Component {
     constructor(props) {
