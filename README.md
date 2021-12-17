@@ -20,6 +20,8 @@ A Balderdash-style game for poetry.
 Play the demo at https://poems.jminjie.com
 
 ## Development
-To run the client open the index.html file in your browser, or serve it over localhost with `python -m SimpleHTTPServer` or for python 3 `python -m http.server`.
-
 To run the server on localhost:5049 run `node node-server/index.js debug`.
+
+To run the client serve it over localhost with `python -m SimpleHTTPServer` or `python3 -m http.server`.
+
+The game should be accessible at localhost:8000.
