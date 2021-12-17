@@ -17,11 +17,9 @@ A Balderdash-style game for poetry.
 - Hit the "reveal" button to see the real ending.
 
 ## Demo
-Play the demo at http://poems.jminjie.com (note that HTTPS is not currently supported).
+Play the demo at https://poems.jminjie.com
 
-## Self-host instructions
+## Development
 To run the client open the index.html file in your browser, or serve it over localhost with `python -m SimpleHTTPServer` or for python 3 `python -m http.server`.
 
-To run the server on port 5049 run `node node-server/index.js`.
-
-Make sure the hardcoded IP in the client matches the current IP of the server. On a single device you can use localhost:5049 but if you want to use multiple clients at once, you'll need to find your local IP and hardcode it, as each client has a different localhost. You can scan for active hosts on the wifi with `nmap -sn 192.168.86.0/24`.
+To run the server on localhost:5049 run `node node-server/index.js debug`.

@@ -14,7 +14,7 @@ class Game extends React.Component {
             endings : [ "dummy ending 1", "dummy ending 2" ],
         };
 
-        this.ws = new WebSocket(SERVER);
+        this.ws = new WebSocket(LOCALHOST);
         this.ws.addEventListener("open", () => {
             console.log("Opened websocket");
             this.ws.send(keySuffix() + "join");

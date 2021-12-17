@@ -1,14 +1,27 @@
 const WebSocket = require("ws");
-const https = require("https");
 const fs = require("fs");
 
-var httpsServer = https.createServer({
-        key: fs.readFileSync('/etc/letsencrypt/live/poems.jminjie.com/privkey.pem', 'utf8'),
-        cert: fs.readFileSync('/etc/letsencrypt/live/poems.jminjie.com/fullchain.pem', 'utf8')
-    }
-).listen(5049);
+const DEBUG = (process.argv[2] == "debug") ? true : false;
 
-const wss = new WebSocket.Server({server: httpsServer});
+var server;
+
+if (DEBUG) {
+    console.log("Running in debug mode.");
+    const http = require('http');
+    server = http.createServer(function(req, res) {
+        log(req.url);
+        fileServer.serve(req, res);
+    }).listen(5049);
+} else {
+    const https = require("https");
+    server = https.createServer({
+            key: fs.readFileSync('/etc/letsencrypt/live/poems.jminjie.com/privkey.pem', 'utf8'),
+            cert: fs.readFileSync('/etc/letsencrypt/live/poems.jminjie.com/fullchain.pem', 'utf8')
+        }
+    ).listen(5049);
+}
+
+const wss = new WebSocket.Server({server: server});
 
 class Game {
     // Game states are as follows:
